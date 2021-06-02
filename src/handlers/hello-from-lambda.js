@@ -16,7 +16,7 @@
  */
 
 const fs = require('fs');
-const uuidv4 = require('../../node_modules/uuid/dist/v4');
+const { v4: uuidv4 } = require('../../node_modules/uuid');
 
 // Get general configuration.
 const config = JSON.parse(fs.readFileSync('./config.json'));
