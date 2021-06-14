@@ -1,0 +1,55 @@
+{
+  "manifest": {
+    "apis": {
+      "smartHome": {
+        "endpoint": {
+          "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V"
+        },
+        "protocolVersion": "3",
+        "regions": {
+          "NA": {
+            "endpoint": {
+              "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V"
+            }
+          }
+        }
+      }
+    },
+    "manifestVersion": "1.0",
+    "permissions": [
+      {
+        "name": "alexa::async_event:write"
+      }
+    ],
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "alexa_pixsee_dev"
+        }
+      }
+    },
+    "events": {
+      "endpoint": {
+        "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V"
+      },
+      "subscriptions": [
+        {
+          "eventName": "SKILL_ENABLED"
+        },
+        {
+          "eventName": "SKILL_DISABLED"
+        },
+        {
+          "eventName": "SKILL_PERMISSION_ACCEPTED"
+        },
+        {
+          "eventName": "SKILL_PERMISSION_CHANGED"
+        },
+        {
+          "eventName": "SKILL_ACCOUNT_LINKED"
+        }
+      ]
+    },
+    "manifestVersion": "1.0"
+  }
+}

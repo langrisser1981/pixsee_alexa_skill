@@ -1,0 +1,25 @@
+{
+    "version": "1.0",
+    "context": {
+        "System": {
+            "application": {
+                "applicationId": "amzn1.ask.skill.3c682ec3-139e-4886-b237-b0302311b038"
+            },
+            "user": {
+                "userId": "amzn1.ask.account.AETNYOKZW5RBQBPKMKQ6J5MTINYHD25DRHLUGKMPLL2PBTF6B4Y7B5EQG3UJFGHATSSWXBFPJCPRHNMCL3RCP2JZ4KD6JF2SKLSFEKOL4XEV54CHOUZJMSBJ2LBFGSEJKLIQ77BRECH3AJFDMO6NKA3FXH6TVDDOE7I7FK7VPXTLFKXX76KSJHTESC2KPVHF45XZDXKFPCCTSUA"
+            },
+            "apiEndpoint": "https://api.amazonalexa.com",
+            "apiAccessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEifQ.eyJhdWQiOiJodHRwczovL2FwaS5hbWF6b25hbGV4YS5jb20iLCJpc3MiOiJBbGV4YVNraWxsS2l0Iiwic3ViIjoiYW16bjEuYXNrLnNraWxsLjNjNjgyZWMzLTEzOWUtNDg4Ni1iMjM3LWIwMzAyMzExYjAzOCIsImV4cCI6MTYyMjc5NTg1MywiaWF0IjoxNjIyNzkyMjUzLCJuYmYiOjE2MjI3OTIyNTMsInByaXZhdGVDbGFpbXMiOnsidXNlcklkIjoiYW16bjEuYXNrLmFjY291bnQuQUVUTllPS1pXNVJCUUJQS01LUTZKNU1USU5ZSEQyNURSSExVR0tNUExMMlBCVEY2QjRZN0I1RVFHM1VKRkdIQVRTU1dYQkZQSkNQUkhOTUNMM1JDUDJKWjRLRDZKRjJTS0xTRkVLT0w0WEVWNTRDSE9VWkpNU0JKMkxCRkdTRUpLTElRNzdCUkVDSDNBSkZETU82TktBM0ZYSDZUVkRET0U3STdGSzdWUFhUTEZLWFg3NktTSkhURVNDMktQVkhGNDVYWkRYS0ZQQ0NUU1VBIn19.JhdeJGIkQ0TvvXdFYA7AjZpZoGHZhsxuIF4-keRP0ZdyNjwzmk9bWlKHOairB6XXwFg8y0Z9qubpOS3MKPdPnD1DNT57zmptjn069Ca2pab70X4p1O_FGaG7Jy1hovdmfO38SXalbKQj2WMXFwApwAl0SPPrrTS8iZMefygWIMLmHKBZl8P-gwuT8_TNRYThtMh3PdIxa48_Pv4NkznzHYbj0r5VDNaxMqae_0LcJMm4f3yY_G1QbcPvKT-223FDIIaP9zuFoyyYd9nwGB-Fyh5v3NECynGjSTaAvRoyu5dAXGcB9dkfUFI1Cw2JuZHpuKpG6vsgL0kPOOv-Gy7Qvw"
+        }
+    },
+    "request": {
+        "type": "AlexaSkillEvent.SkillDisabled",
+        "requestId": "782c2ee8-c653-4aad-ad39-0d380fadbd27",
+        "timestamp": "2021-06-04T07:37:32Z",
+        "eventCreationTime": "2021-06-04T07:37:32Z",
+        "eventPublishingTime": "2021-06-04T07:37:33Z",
+        "body": {
+            "userInformationPersistenceStatus": "NOT_PERSISTED"
+        }
+    }
+}

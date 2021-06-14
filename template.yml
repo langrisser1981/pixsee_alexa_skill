@@ -30,6 +30,10 @@ Resources:
       Policies:
         # Give Lambda basic execution Permission to the helloFromLambda
         - AWSLambdaBasicExecutionRole
+      Environment:
+        Variables:
+          databaseName: lambdadb
+          databaseUser: admin
       Events:
         AlexaSkillEvent:
           Type: AlexaSkill

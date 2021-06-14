@@ -1,0 +1,26 @@
+{
+    "version": "1.0",
+    "context": {
+        "System": {
+            "application": {
+                "applicationId": "amzn1.ask.skill.3c682ec3-139e-4886-b237-b0302311b038"
+            },
+            "user": {
+                "userId": "amzn1.ask.account.AEO6Z7TD5HR3ZE7KBYRYM4LWUH2EZXKOHSJNL6GAIT2O5OSWV4VFDL6JB3CLR4PP3OHCVIMJS3HECFSD2AHQXPHQHHL6T7Z4OS7B2ORCEK7JCH6TP76NJZDRBVFYCNLLJI4J627CP2LEVGSAGZDP5WNJLOMLS7GC4RHOFHUB5BLWPE57XPTR6NFZ76BI2L2ZHOHNUXNKSBWWNPY",
+                "accessToken": "MDg5ZDllN2ItNDZiZC00NmQzLWEzNGYtOGFiMjgyMDRjZTg3"
+            },
+            "apiEndpoint": "https://api.amazonalexa.com",
+            "apiAccessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEifQ.eyJhdWQiOiJodHRwczovL2FwaS5hbWF6b25hbGV4YS5jb20iLCJpc3MiOiJBbGV4YVNraWxsS2l0Iiwic3ViIjoiYW16bjEuYXNrLnNraWxsLjNjNjgyZWMzLTEzOWUtNDg4Ni1iMjM3LWIwMzAyMzExYjAzOCIsImV4cCI6MTYyMjc5NjAzNywiaWF0IjoxNjIyNzkyNDM3LCJuYmYiOjE2MjI3OTI0MzcsInByaXZhdGVDbGFpbXMiOnsidXNlcklkIjoiYW16bjEuYXNrLmFjY291bnQuQUVPNlo3VEQ1SFIzWkU3S0JZUllNNExXVUgyRVpYS09IU0pOTDZHQUlUMk81T1NXVjRWRkRMNkpCM0NMUjRQUDNPSENWSU1KUzNIRUNGU0QyQUhRWFBIUUhITDZUN1o0T1M3QjJPUkNFSzdKQ0g2VFA3Nk5KWkRSQlZGWUNOTExKSTRKNjI3Q1AyTEVWR1NBR1pEUDVXTkpMT01MUzdHQzRSSE9GSFVCNUJMV1BFNTdYUFRSNk5GWjc2QkkyTDJaSE9ITlVYTktTQldXTlBZIn19.RXwGj7aOpavTvi8uWRJFyFalBHP6_R4RM4Jca5qhFQWna-DmIl5QqrVH1xY2rA-UbX-G7olW1OMzSedBcINFEAJRHJmnZW4F7VnCNl8UZElz9eVwe08a5pNncXeE4e-3sW5icpD2xIQ0DzD5Lk4xGdJ_HXozdh3uhziBnNaHRvBJlSTjaR9X-AsQmNtPpRk1wgaYImGqW6Ew0xaX6YWLvWwPtJBU06LuAAiWs0W23kW3XMkog3_YB_pt0LEa8piKUChmkINReheSsHG0oEQbx7uca-7OTfA9Gn_T62OavKMo1xThP_FOOdog7pBa2Rukhe003c40pxYGI0MD2d9TQw"
+        }
+    },
+    "request": {
+        "type": "AlexaSkillEvent.SkillAccountLinked",
+        "requestId": "8c09db8b-a842-4620-ba5b-64510fc95f37",
+        "timestamp": "2021-06-04T07:40:36Z",
+        "eventCreationTime": "2021-06-04T07:40:36Z",
+        "eventPublishingTime": "2021-06-04T07:40:37Z",
+        "body": {
+            "accessToken": "MDg5ZDllN2ItNDZiZC00NmQzLWEzNGYtOGFiMjgyMDRjZTg3"
+        }
+    }
+}

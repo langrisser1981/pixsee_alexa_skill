@@ -14,7 +14,7 @@
  * 
  * Copyright (c) Lindo St. Angel 2018.
  */
-
+const { apiUserInfo, apiUserLogin } = require('./api')
 const fs = require('fs');
 const { v4: uuidv4 } = require('../../node_modules/uuid');
 
@@ -166,9 +166,9 @@ function handleDiscovery(request, callback) {
                     version: '3',
                     cameraStreamConfigurations: [
                         {
-                            protocols: ['RTSP'], 
+                            protocols: ['RTSP'],
                             resolutions: camera.resolutions,
-                            authorizationTypes: ['NONE'], 
+                            authorizationTypes: ['NONE'],
                             videoCodecs: camera.videoCodecs,
                             audioCodecs: camera.audioCodecs
                         }]
@@ -185,7 +185,7 @@ function handleDiscovery(request, callback) {
     });
 
     const response = {
-        'event': {header, 'payload': {endpoints}}
+        'event': { header, 'payload': { endpoints } }
     };
 
     /**
@@ -266,7 +266,7 @@ function handleControl(request, callback) {
 
     // TODO: handle multiple camera streams
     const cameraStream = request.directive.payload.cameraStreams[0];
-    
+
     const header = {
         correlationToken: correlationToken,
         messageId: generateMessageID(),
@@ -279,7 +279,7 @@ function handleControl(request, callback) {
     const camerasObj = getDevicesFromPartnerCloud();
     const cameraIdx = parseInt(applianceId) - 1;
     const uri = camerasObj.cameras[cameraIdx].uri;
-    
+
     const payload = {
         cameraStreams: [
             {
@@ -293,9 +293,9 @@ function handleControl(request, callback) {
     };
 
     const response = {
-        event: {header, payload}
+        event: { header, payload }
     };
-        
+
     log('DEBUG', `Control Confirmation: ${JSON.stringify(response)}`);
 
     callback(null, response);
@@ -309,7 +309,7 @@ function handleControl(request, callback) {
  * @param {object} request - The full request object from the Alexa smart home service.
  * @param {function} callback - The callback object on which to succeed or fail the response.
  */
-function handleAcceptGrant (request, callback) {
+function handleAcceptGrant(request, callback) {
     log('DEBUG', `Accept Grant: ${JSON.stringify(request)}`);
 
     const response = {
@@ -335,7 +335,7 @@ function handleAcceptGrant (request, callback) {
  * @param {object} request - The full request object from the Alexa smart home service.
  * @param {function} callback - The callback object on which to succeed or fail the response.
  */
-function handleMediaMetadata (request, callback) {
+function handleMediaMetadata(request, callback) {
     log('DEBUG', `MediaMetadata: ${JSON.stringify(request)}`);
 
     const mediaId = request.directive.payload.filters.mediaIds[0];
@@ -343,9 +343,9 @@ function handleMediaMetadata (request, callback) {
     // Replace underscores with slashes to reform path to recordings.
     // Underscores were used in the media id to be compatible w/Alexa MediaMetadata API.
     const mediaIdArr = mediaId.split('__');
-    const manufacturerId = mediaIdArr[0]+'-'+mediaIdArr[1];
-    const mediaUri = VIDEO_URI_BASE+RECORDINGS_BASE_PATH+
-        manufacturerId+'/'+mediaIdArr.slice(2).join('/')+'.mp4';
+    const manufacturerId = mediaIdArr[0] + '-' + mediaIdArr[1];
+    const mediaUri = VIDEO_URI_BASE + RECORDINGS_BASE_PATH +
+        manufacturerId + '/' + mediaIdArr.slice(2).join('/') + '.mp4';
     log('DEBUG', `mediaUri: ${mediaUri}`);
 
     let tenMinsFromNow = new Date();
@@ -376,7 +376,7 @@ function handleMediaMetadata (request, callback) {
                         //'audioCodec': 'NONE',
                         uri: {
                             value: mediaUri,
-                            expireTime: tenMinsFromNow.toISOString().split('.')[0]+'Z'
+                            expireTime: tenMinsFromNow.toISOString().split('.')[0] + 'Z'
                         }
                     }
                 }]
@@ -399,6 +399,62 @@ function handleMediaMetadata (request, callback) {
  * https://github.com/alexa/alexa-smarthome-validation
  */
 exports.handler = (request, context, callback) => {
+    log('DEBUG', `request: ${JSON.stringify(request)}`);
+
+    const handlers = new Chain(AlexaHandlers)
+    handlers.confirm([request, context, callback])
+};
+
+/* 
+@param {Array} handlers - handlers set to pass the request through
+ */
+class Chain {
+    constructor(handlers) {
+        const resultHandler = (args) => {
+            console.log('Final');
+        };
+        this.handlers = [...Object.values(handlers), resultHandler].map((handler, index) => args => handler(args, this.handlers[index + 1]));
+    }
+
+    confirm(args) {
+        this.handlers[0](args);
+    }
+}
+
+// Set of handlers to process request
+
+const AlexaHandlers = {
+    events: (args, next) => {
+        let [event, context, callback] = args;
+        if (event.request != null && event.request.type != null) {
+            handleEvents(event, callback);
+        }
+        next(args);
+    },
+    directives: (args, next) => {
+        let [request, context, callback] = args;
+        if (request.directive != null && request.directive.header != null) {
+            handleDirectives(request, callback);
+        }
+        next(args);
+    }
+}
+
+
+function handleEvents(event, callback) {
+    switch (event.request.type) {
+        case 'AlexaSkillEvent.SkillAccountLinked':
+            log('event', '1')
+            break;
+
+        case 'AlexaSkillEvent.SkillDisabled':
+            log('event', '2')
+            break;
+
+    }
+}
+
+function handleDirectives(request, callback) {
     switch (request.directive.header.namespace) {
         /**
          * The namespace of 'Alexa.ConnectedHome.Discovery' indicates a request is being made to the Lambda for
@@ -407,36 +463,36 @@ exports.handler = (request, context, callback) => {
          * For more information on device discovery, please see
          * https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/smart-home-skill-api-reference#discovery-messages
          */
-    case 'Alexa.Discovery':
-        handleDiscovery(request, callback);
-        break;
+        case 'Alexa.Discovery':
+            handleDiscovery(request, callback);
+            break;
 
         /**
          * The namespace of "Alexa.CameraStreamController" indicates a request is being made to initialize a camera stream for an endpoint.
          * The full list of Control events sent to your lambda are described below.
          *  https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/smart-home-skill-api-reference#payload
          */
-    case 'Alexa.CameraStreamController':
-        handleControl(request, callback);
-        break;
+        case 'Alexa.CameraStreamController':
+            handleControl(request, callback);
+            break;
 
         /**
          * Accept Grant.
          * This enables you to obtain credentials that identify and authenticate a customer to Alexa.
          * See https://developer.amazon.com/docs/device-apis/alexa-authorization.html.
          */
-    case 'Alexa.Authorization':
-        handleAcceptGrant(request, callback);
-        break;
+        case 'Alexa.Authorization':
+            handleAcceptGrant(request, callback);
+            break;
 
         /**
          * GetMediaMetadata.
          * Sent when Alexa needs to update information about the media recording, such as updating the URL.
          * See https://developer.amazon.com/docs/device-apis/alexa-mediametadata.html.
          */
-    case 'Alexa.MediaMetadata':
-        handleMediaMetadata(request, callback);
-        break;
+        case 'Alexa.MediaMetadata':
+            handleMediaMetadata(request, callback);
+            break;
 
         /**
          * The namespace of "Alexa.ConnectedHome.Query" indicates a request is being made to query devices about
@@ -448,14 +504,14 @@ exports.handler = (request, context, callback) => {
         // case 'Alexa.ConnectedHome.Query':
         //     handleQuery(request, callback);
         //     break;
-
         /**
          * Received an unexpected message
          */
-    default: {
-        const errorMessage = `No supported namespace: ${request.directive.header.namespace}`;
-        log('ERROR', errorMessage);
-        callback(new Error(errorMessage));
+        default: {
+            const errorMessage = `No supported namespace: ${request.directive.header.namespace}`;
+            log('ERROR', errorMessage);
+            callback(new Error(errorMessage));
+        }
     }
-    }
-};
+}
+
