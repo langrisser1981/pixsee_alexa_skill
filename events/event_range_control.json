@@ -1,0 +1,23 @@
+{
+    "directive": {
+        "header": {
+            "namespace": "Alexa.RangeController",
+            "instance": "Camera.volume",
+            "name": "SetRangeValue",
+            "messageId": "<message id>",
+            "correlationToken": "<an opaque correlation token>",
+            "payloadVersion": "3"
+        },
+        "endpoint": {
+            "scope": {
+                "type": "BearerToken",
+                "token": "YTI2ZGJlNmItMTU4OS00NGExLTg4ZDAtMDlmMjEyNjc3MTI0"
+            },
+            "endpointId": "<endpoint id>",
+            "cookie": {}
+        },
+        "payload": {
+            "rangeValue": 7
+        }
+    }
+}

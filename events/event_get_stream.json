@@ -1,0 +1,33 @@
+{
+    "directive": {
+        "header": {
+            "namespace": "Alexa.CameraStreamController",
+            "name": "InitializeCameraStreams",
+            "payloadVersion": "3",
+            "messageId": "c35f5249-e218-43c2-b32e-d50d75e679a0",
+            "correlationToken": "AAAAAAAAAAD7tKZ7h5FuEvJLpR1fITe5/AEAAAAAAADGa4KbmELzA0qcLyRPVhHWPjxhsoWJT09/I9WrP7RGaLtLbO38yr0GwNR+ED8IGOz+M9yq7R2jkwOuc568fSdagS6S3FzxYXhP7FVHYpJu1Dn+1CNcQhWYWb6ipHbkVkRJp4IG2wVWfq/UucYnczPO06nJvWbHDZDQtl0+qigZLrhF+DpdcQmmBLt8Fw3BDsafYLvzPkTPEodesL3z0Bw9t6AkTB8p++M1x2Xi30pqy2/LBym5Tk6aXOLgZTMhUUdaDFgREWzfNJkTziPs3zes9Ia2bKebC8Jx9L79xNRILERVyHZNMkGHH/9f9k4wFUmKCSajHUofp4kkhmeLk6QpIAAkwEMsMM/Gerio+rE4PNjhiGKL303V12NAXAkIO1cHpCh3c6Txl3TkSl41asvEnzNW+47Eutu2wCsTan3F2owqa/1Xmbit7bYOvAJiqhykFFFe12y5iNDuX3h5C+JlspHdQ2eNEToba+EYyAZcuMI7+4FQFhr6mKAyS7WLhCOpmnVfYgdKDb/KT8rSxO9UvcPR5h8pNlAxYCibWPBlZ27NJgZg4zg1uEDEsCHfFauKTti84+SoruNNbYShAxZRwYYz+l7Zv0SMLvi1h+1eKjm/WCQHjIp8H5Tzfh7RtxBUE9Uwij2O5gMNbF9gqip/zP6cYJpHmaNxFJnn"
+        },
+        "endpoint": {
+            "scope": {
+                "type": "BearerToken",
+                "token": "YTI2ZGJlNmItMTU4OS00NGExLTg4ZDAtMDlmMjEyNjc3MTI0"
+            },
+            "endpointId": "1",
+            "cookie": {}
+        },
+        "payload": {
+            "cameraStreams": [
+                {
+                    "authorizationType": "NONE",
+                    "protocol": "RTSP",
+                    "videoCodec": "H264",
+                    "audioCodec": "NONE",
+                    "resolution": {
+                        "width": 1280,
+                        "height": 720
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,141 +1,144 @@
 {
-    "amzn": {
-        "clientId": "REPLACE",
-        "clientSecret": "REPLACE",
-        "grantCode": "REPLACE",
-        "lwaHost": "api.amazon.com",
-        "lwaPath": "/auth/o2/token",
-        "eventGatewayHost": "api.amazonalexa.com",
-        "eventGatewayPath": "/v3/events",
-        "preemptiveRefreshTime": 300
-    },
-    "mongodb": {
-        "mongodbUrl": "REPLACE",
-        "mongodbCollection": "camera_uploads"
-    },
-    "log": {
-        "level": "info",
-        "silent": false,
-        "consoleLog": true,
-        "baseName": "REPLACE"
-    },
-    "recordings": {
-        "recordingsBasePath": "REPLACE",
-        "videoUriBase": "REPLACE",
-        "checkRecordingsInterval": 5000
-    },
-    "cameras":[
-      {
-        "endpointId": "1",
-        "manufacturerName": "Axis",
-        "manufacturerId": "axis-ACCC8E5E7513",
-        "modelName": "P1425-LE",
-        "friendlyName": "Front Porch Camera",
-        "description": "Front Porch Camera",
-        "resolutions": [
-          {"width": 1280, "height": 720}
-        ],
-        "videoCodecs": ["H264"],
-        "audioCodecs": ["NONE"],
-        "uri": "rtsp://cam.lsacam.com:443/proxyStream-1"
-      },
-      {
-        "endpointId": "2",
-        "manufacturerName": "Axis",
-        "manufacturerId": "",
-        "modelName": "P1425-LE",
-        "friendlyName": "East Side Camera",
-        "description": "East Side Camera",
-        "resolutions": [
-          {"width": 720,  "height": 1280}
-        ],
-        "videoCodecs": ["H264"],
-        "audioCodecs": ["NONE"],
-        "uri": "rtsp://cam.lsacam.com:443/proxyStream-2"
-      },
-      {
-        "endpointId": "3",
-        "manufacturerName": "Axis",
-        "manufacturerId": "",
-        "modelName": "P1435-LE",
-        "friendlyName": "Back Yard Camera",
-        "description": "Back Yard Camera",
-        "resolutions": [
-          {"width": 1280, "height": 720}
-        ],
-        "videoCodecs": ["H264"],
-        "audioCodecs": ["NONE"],
-        "uri": "rtsp://cam.lsacam.com:443/proxyStream-3"
-      },
-      {
-        "endpointId": "4",
-        "manufacturerName": "Axis",
-        "manufacturerId": "",
-        "modelName": "P1425-LE",
-        "friendlyName": "Back Garage Camera",
-        "description": "Back Garage Camera",
-        "resolutions": [
-          {"width": 1280, "height": 720}
-        ],
-        "videoCodecs": ["H264"],
-        "audioCodecs": ["NONE"],
-        "uri": "rtsp://cam.lsacam.com:443/proxyStream-4"
-      },
-      {
-        "endpointId": "5",
-        "manufacturerName": "Axis",
-        "manufacturerId": "axis-ACCC8E6E3530",
-        "modelName": "P1425-LE",
-        "friendlyName": "Playroom Door Camera",
-        "description": "Playroom Door Camera",
-        "resolutions": [
-          {"width": 1280, "height": 720}
-        ],
-        "videoCodecs": ["H264"],
-        "audioCodecs": ["NONE"],
-        "uri": "rtsp://cam.lsacam.com:443/proxyStream-5"
-      },
-      {
-        "endpointId": "6",
-        "manufacturerName": "Axis",
-        "manufacturerId": "",
-        "modelName": "P1425-LE",
-        "friendlyName": "Front Gate Camera",
-        "description": "Front Gate Camera",
-        "resolutions": [
-          {"width": 720,  "height": 1280}
-        ],
-        "videoCodecs": ["H264"],
-        "audioCodecs": ["NONE"],
-        "uri": "rtsp://cam.lsacam.com:443/proxyStream-6"
-      },
-      {
-        "endpointId": "7",
-        "manufacturerName": "Axis",
-        "manufacturerId": "",
-        "modelName": "P1435-LE",
-        "friendlyName": "Back Porch Camera",
-        "description": "Back Porch Camera",
-        "resolutions": [
-          {"width": 1280, "height": 720}
-        ],
-        "videoCodecs": ["H264"],
-        "audioCodecs": ["NONE"],
-        "uri": "rtsp://cam.lsacam.com:443/proxyStream-7"
-      },
-      {
-        "endpointId": "8",
-        "manufacturerName": "Wyze",
-        "manufacturerId": "",
-        "modelName": "Wyze Cam v2",
-        "friendlyName": "Crawl Space Camera",
-        "description": "Crawl Space Camera",
-        "resolutions": [
-          {"width": 1280, "height": 720}
-        ],
-        "videoCodecs": ["H264"],
-        "audioCodecs": ["G711"],
-        "uri": "rtsp://cam.lsacam.com:443/proxyStream-8"
-      }
+  "amzn": {
+    "clientId": "amzn1.application-oa2-client.fcc95db308864d5e807ac11655af4b5b",
+    "clientSecret": "fed3e1d844feaf3898fb2f56fb964f42989b47e19b02439f80784269e45ff670",
+    "grantCode": "REPLACE",
+    "lwaHost": "api.amazon.com",
+    "lwaPath": "/auth/o2/token",
+    "eventGatewayHost": "api.amazonalexa.com",
+    "eventGatewayPath": "/v3/events",
+    "preemptiveRefreshTime": 300
+  },
+  "mongodb": {
+    "mongodbUrl": "REPLACE",
+    "mongodbCollection": "camera_uploads"
+  },
+  "log": {
+    "level": "info",
+    "silent": false,
+    "consoleLog": true,
+    "baseName": "REPLACE"
+  },
+  "recordings": {
+    "recordingsBasePath": "REPLACE",
+    "videoUriBase": "REPLACE",
+    "checkRecordingsInterval": 5000
+  },
+  "cameras": [
+    {
+      "endpointId": "1",
+      "manufacturerName": "Compal",
+      "manufacturerId": "Compal",
+      "modelName": "Pixsee",
+      "friendlyName": "Pixsee Camera",
+      "description": "Pixsee Camera",
+      "resolutions": [
+        {
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "videoCodecs": [
+        "H264"
+      ],
+      "audioCodecs": [
+        "NONE"
+      ],
+      "uri": "rtsp://cam.lsacam.com:443/proxyStream-1",
+      "capabilities": [
+        {
+          "type": "AlexaInterface",
+          "interface": "Alexa.RangeController",
+          "instance": "Camera.Volume",
+          "version": "3",
+          "properties": {
+            "supported": [
+              {
+                "name": "rangeValue"
+              }
+            ],
+            "proactivelyReported": true,
+            "retrievable": true,
+            "nonControllable": false
+          },
+          "capabilityResources": {
+            "friendlyNames": [
+              {
+                "@type": "text",
+                "value": {
+                  "text": "Volume",
+                  "locale": "en-US"
+                }
+              }
+            ]
+          },
+          "configuration": {
+            "supportedRange": {
+              "minimumValue": 0,
+              "maximumValue": 7,
+              "precision": 1
+            },
+            "presets": [
+              {
+                "rangeValue": 7,
+                "presetResources": {
+                  "friendlyNames": [
+                    {
+                      "@type": "asset",
+                      "value": {
+                        "assetId": "Alexa.Value.Maximum"
+                      }
+                    },
+                    {
+                      "@type": "asset",
+                      "value": {
+                        "assetId": "Alexa.Value.High"
+                      }
+                    },
+                    {
+                      "@type": "text",
+                      "value": {
+                        "text": "Highest",
+                        "locale": "en-US"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "rangeValue": 1,
+                "presetResources": {
+                  "friendlyNames": [
+                    {
+                      "@type": "asset",
+                      "value": {
+                        "assetId": "Alexa.Value.Minimum"
+                      }
+                    },
+                    {
+                      "@type": "asset",
+                      "value": {
+                        "assetId": "Alexa.Value.Low"
+                      }
+                    },
+                    {
+                      "@type": "text",
+                      "value": {
+                        "text": "Lowest",
+                        "locale": "en-US"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
   ]
 }
