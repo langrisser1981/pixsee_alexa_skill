@@ -25,12 +25,16 @@ const config = JSON.parse(fs.readFileSync('./config.json'));
 const RECORDINGS_BASE_PATH = config.recordings.recordingsBasePath;
 //
 const VIDEO_URI_BASE = config.recordings.videoUriBase;
-
 /**
  * Utility functions
  */
 
+String.prototype.splice = function (start, delCount, newSubStr) {
+    return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+};
+
 /**
+ * 
  * Pretty logger.
  */
 function log(title, msg) {
@@ -354,6 +358,10 @@ async function handleControl(request, callback) {
     if (res.status == 200) {
         // 定義回覆內容
         uri = res.data.result.path;
+        log('info', uri)
+        // uri = uri.splice(7, 0, "admin:Aa123456@");
+        // log('info', uri)
+
         payload = {
             cameraStreams: [
                 {
@@ -364,7 +372,7 @@ async function handleControl(request, callback) {
                     videoCodec: cameraStream.videoCodec,
                     audioCodec: cameraStream.audioCodec
                 }],
-            imageUri: "https://s.yimg.com/zp/MerchandiseImages/AC7CA41893-SP-9307147.jpg"
+            // imageUri: "https://s.yimg.com/zp/MerchandiseImages/AC7CA41893-SP-9307147.jpg"
         };
 
     } else {
@@ -376,7 +384,8 @@ async function handleControl(request, callback) {
     }
 
     const response = {
-        event: { header, endpoint, payload },
+        // event: { header, endpoint, payload },
+        event: { header, payload },
         context: { properties }
     };
 
