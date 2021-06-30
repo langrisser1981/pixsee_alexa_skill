@@ -26,9 +26,9 @@
   },
   "cameras": [
     {
-      "endpointId": "1",
-      "manufacturerName": "Compal",
-      "manufacturerId": "Compal",
+      "endpointId": "Mjg2ZjRmNDMtNTU3Yi00ZGZiLTk3MDYtOWZiNzkwMjQwNWZm",
+      "manufacturerName": "Pixsee",
+      "manufacturerId": "Pixsee",
       "modelName": "Pixsee",
       "friendlyName": "Pixsee Camera",
       "description": "Pixsee Camera",
@@ -46,7 +46,7 @@
         "H264"
       ],
       "audioCodecs": [
-        "NONE"
+        "AAC"
       ],
       "uri": "rtsp://cam.lsacam.com:443/proxyStream-1",
       "capabilities": [

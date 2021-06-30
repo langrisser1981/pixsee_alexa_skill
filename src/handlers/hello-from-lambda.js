@@ -14,7 +14,7 @@
  * 
  * Copyright (c) Lindo St. Angel 2018.
  */
-const { apiSetToken, apiUserInfo, apiBabyInfo, apiDeviceInfo, apiBindToCloud, apiGetStreamURI, apiSendIOTCmd, apiUserLogin } = require('./api')
+const { apiSetToken, apiUserInfo, apiBabyInfo, apiDeviceInfo, apiBindToCloud, apiGetStreamURI, apiSendIOTCmd, apiUserLogin, apiGetStreamURI_byDeviceId } = require('./api')
 const fs = require('fs');
 const { v4: uuidv4 } = require('../../node_modules/uuid');
 const Buffer = require('buffer').Buffer;
@@ -353,8 +353,11 @@ async function handleControl(request, callback) {
     let payload = {};
 
     // 取得串流位置
-    const { sn } = await getUserData();
-    const res = await apiGetStreamURI(sn);
+    // const { sn } = await getUserData();
+    // const res = await apiGetStreamURI(sn);
+
+    // 改成用新版的api取得rtsp位置，只需要傳入endpointId就可以，不需要再多次查詢
+    const res = await apiGetStreamURI_byDeviceId(endpointId);
     if (res.status == 200) {
         // 定義回覆內容
         uri = res.data.result.path;

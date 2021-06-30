@@ -45,5 +45,6 @@ module.exports.apiBabyInfo = (openId) => userRequest.get(`/babies?openid=${openI
 module.exports.apiDeviceInfo = (babyId) => userRequest.get(`/devices?babyid=${babyId}`);
 module.exports.apiBindToCloud = (data) => userRequest.post(`/authorization/get_token/avs`, data);
 module.exports.apiGetStreamURI = (sn) => userRequest.get(`/devices/${sn}/rtsp`);
+module.exports.apiGetStreamURI_byDeviceId = (data) => userRequest.get(`/devices/${data}/r`);
 module.exports.apiSendIOTCmd = (sn, payload) => userRequest.put(`/settings/c/${sn}`, payload);
 module.exports.apiDeleteDevice = (deviceId) => userRequest.delete(`/devices/${deviceId}`);
