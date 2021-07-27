@@ -1,3 +1,10 @@
+/* 
+ask smapi get-skill-manifest -s {skillId} -g {development|certified|live} > skill.json
+ask smapi get-skill-manifest -s amzn1.ask.skill.3c682ec3-139e-4886-b237-b0302311b038 -g development > skill.json
+
+ask smapi update-skill-manifest -s {skillId} -g {development|certified|live} --manifest "$(cat skill.json)"
+ask smapi update-skill-manifest -s amzn1.ask.skill.3c682ec3-139e-4886-b237-b0302311b038 -g development --manifest "$(cat skill.json)"
+ */
 {
   "manifest": {
     "apis": {
@@ -44,6 +51,9 @@
         },
         {
           "eventName": "SKILL_PERMISSION_CHANGED"
+        },
+        {
+          "eventName": "SKILL_PROACTIVE_SUBSCRIPTION_CHANGED"
         },
         {
           "eventName": "SKILL_ACCOUNT_LINKED"

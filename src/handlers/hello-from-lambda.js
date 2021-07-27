@@ -810,6 +810,9 @@ function handleEvents(event, callback) {
             log('event', '2')
             break;
 
+        default:
+            log("INFO", JSON.stringify(event));
+
     }
 }
 
