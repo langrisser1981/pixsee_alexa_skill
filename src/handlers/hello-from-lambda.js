@@ -14,7 +14,7 @@
  * 
  * Copyright (c) Lindo St. Angel 2018.
  */
-const { apiSetToken, apiUserInfo, apiBabyInfo, apiDeviceInfo, apiBindToCloud, apiGetStreamURI, apiSendIOTCmd, apiUserLogin, apiGetStreamURI_byDeviceId } = require('./api')
+const { apiSetToken, apiUserInfo, apiBabyInfo, apiDeviceInfo, apiBindToCloud, apiSetUserId, apiGetStreamURI, apiSendIOTCmd, apiUserLogin, apiGetStreamURI_byDeviceId } = require('./api')
 const fs = require('fs');
 const { v4: uuidv4 } = require('../../node_modules/uuid');
 const Buffer = require('buffer').Buffer;
@@ -803,6 +803,7 @@ function handleEvents(event, callback) {
             break;
 
         case 'AlexaSkillEvent.SkillAccountLinked':
+            let res = setUserId(userId);
             log('event', '1')
             break;
 
@@ -965,6 +966,24 @@ const bindToCloud = async (code) => {
         const res = await apiBindToCloud(body)
 
         log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
+        result = res.status == 200 ? true : false;
+    } catch (error) {
+        log('ERROR', error);
+    } finally {
+        return result
+    }
+}
+
+const setUserId = async (userId) => {
+    let result = false;
+
+    try {
+        const body = {
+            "userId": userId
+        }
+        const res = await apiSetUserId(body)
+
+        log('INFO', `setUserId: ${JSON.stringify(res.status)}`)
         result = res.status == 200 ? true : false;
     } catch (error) {
         log('ERROR', error);
