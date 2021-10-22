@@ -264,7 +264,7 @@ async function handleDiscovery(request, callback) {
  * @param {function} callback - The callback object on which to succeed or fail the response.
  */
 async function handleControl(request, callback) {
-    log('DEBUG', `Control Request: ${JSON.stringify(request)}`);
+    // log('DEBUG', `Control Request: ${JSON.stringify(request)}`);
 
     /**
      * Get the access token.

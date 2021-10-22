@@ -10,9 +10,9 @@
         "endpoint": {
             "scope": {
                 "type": "BearerToken",
-                "token": "YTI2ZGJlNmItMTU4OS00NGExLTg4ZDAtMDlmMjEyNjc3MTI0"
+                "token": "N2RkNjliMWItMmJjOS00MDA4LTljNWYtZGFmNjA5Y2I5NWEx"
             },
-            "endpointId": "Mjg2ZjRmNDMtNTU3Yi00ZGZiLTk3MDYtOWZiNzkwMjQwNWZm",
+            "endpointId": "ZDEwZDFhMWEtNGY3Yi00Y2I5LWEzNTgtMGQyM2QyYTBkNDlh",
             "cookie": {}
         },
         "payload": {
@@ -21,7 +21,7 @@
                     "authorizationType": "NONE",
                     "protocol": "RTSP",
                     "videoCodec": "H264",
-                    "audioCodec": "NONE",
+                    "audioCodec": "AAC",
                     "resolution": {
                         "width": 1280,
                         "height": 720

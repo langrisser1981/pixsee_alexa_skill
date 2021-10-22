@@ -33,6 +33,10 @@ module.exports.apiGetGrantCode = (sn) => adminRequest.delete(`/admin/some_device
 module.exports.apiTUTKGetToken = (data) => tutkRequest.post(`/auth/oauth_token?realm=${realm}`, data);
 module.exports.apiTUTKSetToken = (token) => tutkRequest.defaults.headers.common['Authorization'] = token;
 module.exports.apiTUTKquery = (data) => tutkRequest.post(`/be/`, data);
+module.exports.apiTUTKGetVideoLink = (url, data) => tutkRequest.post(url, data);
+module.exports.apiTUTKDownloadVideo = (url) => tutkRequest.get(url, {
+    responseType: 'stream'
+});
 
 const userRequest = axios.create({
     baseURL: baseURL
