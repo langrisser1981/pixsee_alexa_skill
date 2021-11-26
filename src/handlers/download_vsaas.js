@@ -354,6 +354,6 @@ const from = 1634194216000;
 // const to = 1634712617000;
 const to = new Date().getTime();
 const resourcePath = './userdata'
-const files = ['09_a'];
+const files = ['02_b', '03_b', '09_b'];
 
 mainFunction();
