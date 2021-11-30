@@ -49,6 +49,10 @@ module.exports.apiUserInfo = () => userRequest.get('/accounts/limit_info');
 module.exports.apiBabyInfo = (openId) => userRequest.get(`/babies?openid=${openId}`);
 module.exports.apiDeviceInfo = (babyId) => userRequest.get(`/devices?babyid=${babyId}`);
 module.exports.apiGetEventList = (babyId, sdt) => userRequest.get(`/event_histories?babyid=${babyId}&sdt=${sdt}`);
+module.exports.apiGetPhotoList = (babyId, sdt) => userRequest.get(`/storages/s/${babyId}?sdt=${sdt}&first_sync=false`);
+module.exports.apiDownloadPhoto = (fid) => userRequest.get(`/storages/o/${fid}?type=1`, {
+    responseType: 'stream'
+});
 
 module.exports.apiBindToCloud = (data) => userRequest.post(`/authorization/get_token/avs`, data);
 module.exports.apiSetUserId = (data) => userRequest.patch(`/authorization/get_token/avs`, data);

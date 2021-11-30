@@ -1,7 +1,7 @@
 const fs = require('fs');
 const csv2json = require("csvtojson");
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-const { apiGetGrantCode, apiSetToken, apiGetToken, apiUserInfo, apiBabyInfo, apiDeviceInfo, apiGetEventList, apiSetBaseUrl, apiDeleteDevice, apiTUTKGetToken, apiTUTKSetToken, apiTUTKquery, apiTUTKGetVideoLink, apiTUTKDownloadVideo } = require('./api');
+const { apiGetGrantCode, apiSetToken, apiGetToken, apiUserInfo, apiBabyInfo, apiDeviceInfo, apiGetEventList, apiGetPhotoList, apiDownloadPhoto, apiSetBaseUrl, apiDeleteDevice, apiTUTKGetToken, apiTUTKSetToken, apiTUTKquery, apiTUTKGetVideoLink, apiTUTKDownloadVideo } = require('./api');
 
 // if (process.argv.length < 3) {
 //     console.log('Usage: node ' + process.argv[1] + ' FILENAME');
@@ -14,16 +14,8 @@ const readUserData = (filename) => {
 
         csv2json().fromFile(path)
             .then((jsonObj) => {
-                // 第一組資料是裝置序號以及使用者信箱，後面才是事件資訊
-                const userinfo = jsonObj.shift();
-
-                const sn = Object.keys(userinfo)[0];
-                const mail = userinfo[sn];
-                // console.log("sn: ", sn)
-                // console.log("mail: ", mail)
-                console.log(`${filename} : ${sn} : ${mail}`)
-
-                resolve([sn, mail]);
+                // 資料順序是裝置序號以及使用者信箱
+                resolve(jsonObj);
             })
     })
 }
@@ -148,6 +140,19 @@ const getPixseeEventList = async (babyId, sdt) => {
     }
 }
 
+const getPhotoList = async (babyId, sdt) => {
+    try {
+        // 取得事件列表
+        res = await apiGetPhotoList(babyId, sdt);
+        let photoList = res.data.result.data;
+
+        return photoList;
+
+    } catch (error) {
+        log('無法在仁寶雲取得照片列表', error);
+    }
+}
+
 const getVsaasUserInfo = async () => {
     try {
         // 取得使用者資訊
@@ -195,7 +200,7 @@ const getVsaasEventList = async (udid, from, to) => {
     }
 }
 
-const findTargetVideo = async (name, userEvents, udid, server, vsaasEvents) => {
+const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasEvents) => {
     let records = [];
     let i = 0;
 
@@ -215,9 +220,16 @@ const findTargetVideo = async (name, userEvents, udid, server, vsaasEvents) => {
 
         // 轉換時間戳記成人看得懂的格式
         const timeString = ts2date(eventTime);
-
         // 建立檔案名稱
         let filename = `${name}_${type}_${timeString}`;
+
+        // 尋找是否有符合該使用者標記時間範圍內的事件照片
+        const UTCTimeString = ts2date(eventTime, true);
+        let photo = photoList.find((e) => {
+            const photoName = e.fileName;
+            let b = photoName.includes(UTCTimeString);
+            return b;
+        })
 
         // 尋找是否有符合該使用者標記時間範圍內的事件影片
         let vsaasEvent = vsaasEvents.find((e) => {
@@ -227,14 +239,19 @@ const findTargetVideo = async (name, userEvents, udid, server, vsaasEvents) => {
             return Math.abs(diff) < range;
         })
 
-        // 如果有找到符合的事件影片就下載
-        if (vsaasEvent != null) {
+        // 如果事件有同時找到符合的照片和事件影片就下載
+        if (photo && vsaasEvent) {
+            console.log(`第${i}筆資料:`);
+            // 下載照片
+            let fid = photo.fid
+            console.log(`對應的雲端照片: ${fid}`);
+            await downloadPhoto(fid, filename)
+
+            // 下載事件錄影
             let ts = vsaasEvent.start_time_ts;
             // 取得影片連結
             let url = await getVideoLink(server, udid, ts);
-
-            // 下載影片
-            console.log(`第${i}筆資料: 雲端事件錄影連結: ${url}`);
+            console.log(`雲端事件錄影連結: ${url}`);
             let status = await downloadVideo(url, filename);
 
             let record = {
@@ -245,7 +262,10 @@ const findTargetVideo = async (name, userEvents, udid, server, vsaasEvents) => {
             }
             records.push(record);
         } else {
-            console.log(`第${i}筆資料: 雲端事件錄影找不到對應的時間`);
+            let str = `第${i}筆資料:`
+            str += (photo) ? "" : " 找不到對應的照片 ";
+            str += (vsaasEvent) ? "" : " 找不到對應的事件錄影 ";
+            console.log(str);
         }
 
         console.log(` `);
@@ -253,6 +273,22 @@ const findTargetVideo = async (name, userEvents, udid, server, vsaasEvents) => {
 
     // console.log(records);
     return records;
+}
+
+const downloadPhoto = async (fid, filename) => {
+    // console.log("下載照片:", fid);
+    // 下載照片至指定位置
+    try {
+        let path = `${resourcePath}/video/${filename}.jpg`;
+        let stream = await apiDownloadPhoto(fid);
+        stream.data.pipe(fs.createWriteStream(path));
+        console.log(`--照片下載完成: ${filename}.jpg`);
+        return 1;
+
+    } catch (error) {
+        log('--照片下載失敗', error);
+        return 0;
+    }
 }
 
 const getVideoLink = async (server, udid, ts) => {
@@ -276,7 +312,7 @@ const downloadVideo = async (url, filename) => {
         let path = `${resourcePath}/video/${filename}.mp4`;
         let stream = await apiTUTKDownloadVideo(url);
         stream.data.pipe(fs.createWriteStream(path));
-        console.log(`--影片下載完成: ${filename}`);
+        console.log(`--影片下載完成: ${filename}.mp4`);
         return 1;
 
     } catch (error) {
@@ -323,13 +359,15 @@ function getTimeStamp(date, time) {
     return { ts, y, m, d, hh, mm, date, time };
 }
 
-function ts2date(ts) {
+function ts2date(ts, utc = false) {
     let date = new Date(ts);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hour = date.getHours();
-    const min = date.getMinutes();
+    const year = utc ? date.getUTCFullYear() : date.getFullYear();
+    const month = utc ? date.getUTCMonth() + 1 : date.getMonth() + 1;
+    const day = utc ? date.getUTCDate() : date.getDate();
+    let hour = utc ? date.getUTCHours() : date.getHours();
+    hour = ("0" + hour).slice(-2);
+
+    const min = utc ? date.getUTCMinutes() : date.getMinutes();
     return `${year}_${month}_${day}_${hour}_${min}`
 }
 /**
@@ -340,10 +378,10 @@ function log(title, msg) {
     console.log(`[${title}] ${msg}`);
 }
 
-async function process(filename) {
-    // 從外部檔案讀取事件資料
-    const [sn, mail] = await readUserData(filename);
+async function process(sn, mail) {
+    console.log(`開始處理 序號:${sn} 使用者:${mail} 的資料`);
     const name = mail.split("@")[0];
+    let records = [];
 
     // 使用超級使用者權限取得授權碼
     const code = await getGrantCode(sn, mail);
@@ -359,44 +397,65 @@ async function process(filename) {
 
     // 在仁寶雲取得使用者資訊
     const { openId, email, babyId, deviceId } = await getUserData();
+
     // 在仁寶雲取得事件列表
     const userEvents = await getPixseeEventList(babyId, from);
-    console.log(`仁寶雲上有 ${userEvents.length} 個事件`);
+    if (!userEvents) {
+        console.log(`仁寶雲上找不到任何事件`);
+    }
+
+    // 在仁寶雲取得照片列表
+    const photoList = await getPhotoList(babyId, from);
+    if (!photoList) {
+        console.log(`仁寶雲上找不到任何照片`);
+    }
 
     // 取得裝置udid以及影片伺服器
     const [udid, bindingServer] = await getVsaasUserInfo();
+    if (!udid) {
+        console.log(`VSAAS上面沒有這台裝置: ${sn}`);
+    }
     // 取得事件錄影列表
     const vsaasEvents = await getVsaasEventList(udid, from, to);
-    console.log(`VSAAS上有 ${vsaasEvents.length} 個事件錄影`);
+    if (!vsaasEvents) {
+        console.log(`VSAAS上找不到任何事件錄影`);
+    }
 
-    // 尋找並下載符合規則的事件影片
-    const records = await findTargetVideo(name, userEvents, udid, bindingServer, vsaasEvents);
+    if (userEvents && photoList && vsaasEvents) {
+        console.log(`仁寶雲上有 ${userEvents.length} 個事件`);
+        console.log(`仁寶雲上有 ${photoList.length} 個照片`);
+        console.log(`VSAAS上有 ${vsaasEvents.length} 個事件錄影`);
+        // 尋找並下載符合規則的事件影片
+        records = await findTargetVideo(name, userEvents, photoList, udid, bindingServer, vsaasEvents);
+    }
 
     // 將結果另存至外部檔案
-    await saveResult(records, filename);
+    await saveResult(records, name);
 }
 
 async function mainFunction() {
     // 標記程式開始運作的時間
     let startTime = new Date().getTime();
 
-    // 處理每個要求
-    for (let filename of files) {
-        await process(filename);
+    // 從外部檔案讀取事件資料
+    const users = await readUserData(userListCSV);
+    // 下載每個使用者的資料
+    for (let user of users) {
+        const res = await process(user.sn, user.mail);
     }
 
     // 處理完成
     console.log('...Done');
     // 計算總耗時
-    var endTime = new Date().getTime();
+    let endTime = new Date().getTime();
     let cost = endTime - startTime;
     console.log(`總共花了 ${cost / 1000} 秒`)
 }
 
-const from = 1637723293000;
+const from = 1638144000000;
 // const to = 1634712617000;
 const to = new Date().getTime();
 const resourcePath = './userdata'
-const files = ['03_c'];
+const userListCSV = ['userlist'];
 
 mainFunction();
