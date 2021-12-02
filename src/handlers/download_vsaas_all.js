@@ -239,35 +239,45 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
             return Math.abs(diff) < range;
         })
 
-        // 如果事件有同時找到符合的照片和事件影片就下載
-        if (photo && vsaasEvent) {
-            console.log(`第${i}筆資料:`);
-            // 下載照片
-            let fid = photo.fid
-            console.log(`對應的雲端照片: ${fid}`);
-            await downloadPhoto(fid, filename)
+        console.log(`第${i}筆資料:`);
+        let record = {
+            name: name,
+            number: i,
+            status: 0,
+            file: filename
+        }
 
-            // 下載事件錄影
+        // 下載照片
+        if (photo) {
+            let fid = photo.fid;
+            console.log(`對應的雲端照片: ${fid}`);
+            await downloadPhoto(fid, filename);
+        } else {
+            console.log(`找不到對應的事件照片`);
+        }
+
+        // 下載事件錄影
+        if (vsaasEvent) {
             let ts = vsaasEvent.start_time_ts;
             // 取得影片連結
             let url = await getVideoLink(server, udid, ts);
-            console.log(`雲端事件錄影連結: ${url}`);
+            console.log(`雲端事件時間: ${ts}， 錄影連結: ${url}`);
             let status = await downloadVideo(url, filename);
-
-            let record = {
-                name: name,
-                number: i,
-                // status: status,
-                file: filename
-            }
-            records.push(record);
+            record.status = 2;
         } else {
-            let str = `第${i}筆資料:`
-            str += (photo) ? "" : " 找不到對應的照片 ";
-            str += (vsaasEvent) ? "" : " 找不到對應的事件錄影 ";
-            console.log(str);
+            console.log(`找不到對應的事件錄影`);
         }
 
+        // 如果事件有同時找到符合的照片和事件影片就下載
+        if (photo && vsaasEvent) {
+            record.status = 3;
+        } else {
+            // let str = `第${i}筆資料:`
+            // str += (photo) ? "" : " 找不到對應的照片 ";
+            // str += (vsaasEvent) ? "" : " 找不到對應的事件錄影 ";
+        }
+
+        records.push(record);
         console.log(` `);
     }
 
@@ -299,6 +309,8 @@ const getVideoLink = async (server, udid, ts) => {
 
         res = await apiTUTKGetVideoLink(url, data);
         let link = res.data.data.ask_media.url;
+        if (link == undefined) { console.log(JSON.stringify(res.data.data)) };
+
         return link;
 
     } catch (error) {
@@ -362,8 +374,10 @@ function getTimeStamp(date, time) {
 function ts2date(ts, utc = false) {
     let date = new Date(ts);
     const year = utc ? date.getUTCFullYear() : date.getFullYear();
-    const month = utc ? date.getUTCMonth() + 1 : date.getMonth() + 1;
-    const day = utc ? date.getUTCDate() : date.getDate();
+    let month = utc ? date.getUTCMonth() + 1 : date.getMonth() + 1;
+    month = ("0" + month).slice(-2);
+    let day = utc ? date.getUTCDate() : date.getDate();
+    day = ("0" + day).slice(-2);
     let hour = utc ? date.getUTCHours() : date.getHours();
     hour = ("0" + hour).slice(-2);
 
@@ -450,9 +464,11 @@ async function mainFunction() {
     let endTime = new Date().getTime();
     let cost = endTime - startTime;
     console.log(`總共花了 ${cost / 1000} 秒`)
+
+    return;
 }
 
-const from = 1638144000000;
+const from = 1638356400000;
 // const to = 1634712617000;
 const to = new Date().getTime();
 const resourcePath = './userdata'
