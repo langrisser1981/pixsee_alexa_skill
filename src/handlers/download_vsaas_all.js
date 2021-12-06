@@ -424,7 +424,7 @@ function log(title, msg) {
     console.log(`[${title}] ${msg}`);
 }
 
-async function process(sn, mail) {
+async function handler(sn, mail) {
     console.log(`開始處理 序號:${sn} 使用者:${mail} 的資料`);
     const name = mail.split("@")[0];
     let records = [];
@@ -483,11 +483,20 @@ async function mainFunction() {
     // 標記程式開始運作的時間
     let startTime = new Date().getTime();
 
+    let args = process.argv.slice(2);
+    args.forEach(function (val, index, array) {
+        // console.log(index + ': ' + val);
+        if (index == 0 && val != undefined) {
+            from = val;
+        }
+    });
+    console.log(`抓取這時間之後的所有事件資料: ${ts2date(+from)}`);
+
     // 從外部檔案讀取事件資料
     const users = await readUserData(userListCSV);
     // 下載每個使用者的資料
     for (let user of users) {
-        const res = await process(user.sn, user.mail);
+        const res = await handler(user.sn, user.mail);
     }
 
     // 處理完成
@@ -500,7 +509,7 @@ async function mainFunction() {
     return;
 }
 
-const from = 1638576000000;
+let from = 1638576000000;
 // const to = 1634712617000;
 const to = new Date().getTime();
 const resourcePath = './userdata'
