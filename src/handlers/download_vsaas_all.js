@@ -248,22 +248,30 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
         }
 
         // 下載照片
-        if (photo) {
-            let fid = photo.fid;
-            console.log(`對應的雲端照片: ${fid}`);
-            await downloadPhoto(fid, filename);
-        } else {
-            console.log(`找不到對應的事件照片`);
-        }
+        /*         
+                if (photo) {
+                    let fid = photo.fid;
+                    console.log(`對應的雲端照片: ${fid}`);
+                    await downloadPhoto(fid, filename);
+                } else {
+                    console.log(`找不到對應的事件照片`);
+                }
+         */
 
         // 下載事件錄影
         if (vsaasEvent) {
             let ts = vsaasEvent.start_time_ts;
             // 取得影片連結
-            let url = await getVideoLink(server, udid, ts);
+            let url = await getVideoLink(server, udid, ts, "mp4");
             console.log(`雲端事件時間: ${ts}， 錄影連結: ${url}`);
-            let status = await downloadVideo(url, filename);
+            let status = await downloadVideo(url, filename, "mp4");
             record.status = 2;
+
+            ts = vsaasEvent.thumbnail;
+            url = await getVideoLink(server, udid, ts, "jpg");
+            console.log(`雲端事件時間: ${ts}， 縮圖連結: ${url}`);
+            status = await downloadVideo(url, filename, "jpg");
+
         } else {
             console.log(`找不到對應的事件錄影`);
         }
@@ -301,11 +309,21 @@ const downloadPhoto = async (fid, filename) => {
     }
 }
 
-const getVideoLink = async (server, udid, ts) => {
+const getVideoLink = async (server, udid, ts, type) => {
     // 根據時間戳記取得影片連結
     try {
         let url = `https://${server}/ask`;
-        let data = `query {\n\task_media (device:"${udid}",timestamp:"${ts}",length:30,mode:ASK_DOWNLOAD){\n\t\tcode,ret,url\n\t}\n}`;
+
+        let data = ``;
+        switch (type) {
+            case "jpg":
+                data = `query {\n\task_media (device:"${udid}",timestamp:"${ts}",length:0,mode:ASK_ICON,role:ios){\n\t\tcode,ret,url\n\t}\n}`;
+                break;
+
+            case "mp4":
+                data = `query {\n\task_media (device:"${udid}",timestamp:"${ts}",length:30,mode:ASK_DOWNLOAD){\n\t\tcode,ret,url\n\t}\n}`;
+                break;
+        }
 
         res = await apiTUTKGetVideoLink(url, data);
         let link = res.data.data.ask_media.url;
@@ -314,21 +332,29 @@ const getVideoLink = async (server, udid, ts) => {
         return link;
 
     } catch (error) {
-        log('無法取得影片連結', error);
+        log('無法取得下載連結', error);
     }
 }
 
-const downloadVideo = async (url, filename) => {
+const downloadVideo = async (url, filename, type) => {
     // 下載影片至指定位置
     try {
-        let path = `${resourcePath}/video/${filename}.mp4`;
         let stream = await apiTUTKDownloadVideo(url);
+        let path = `${resourcePath}/video/${filename}.${type}`;
         stream.data.pipe(fs.createWriteStream(path));
-        console.log(`--影片下載完成: ${filename}.mp4`);
+        switch (type) {
+            case "jpg":
+                console.log(`--縮圖下載完成: ${filename}.jpg`);
+                break;
+
+            case "mp4":
+                console.log(`--影片下載完成: ${filename}.mp4`);
+                break;
+        }
         return 1;
 
     } catch (error) {
-        log('--影片下載失敗', error);
+        log('--下載失敗', error);
         return 0;
     }
 }
@@ -373,15 +399,21 @@ function getTimeStamp(date, time) {
 
 function ts2date(ts, utc = false) {
     let date = new Date(ts);
+
     const year = utc ? date.getUTCFullYear() : date.getFullYear();
+
     let month = utc ? date.getUTCMonth() + 1 : date.getMonth() + 1;
     month = ("0" + month).slice(-2);
+
     let day = utc ? date.getUTCDate() : date.getDate();
     day = ("0" + day).slice(-2);
+
     let hour = utc ? date.getUTCHours() : date.getHours();
     hour = ("0" + hour).slice(-2);
 
-    const min = utc ? date.getUTCMinutes() : date.getMinutes();
+    let min = utc ? date.getUTCMinutes() : date.getMinutes();
+    min = ("0" + min).slice(-2);
+
     return `${year}_${month}_${day}_${hour}_${min}`
 }
 /**
@@ -468,7 +500,7 @@ async function mainFunction() {
     return;
 }
 
-const from = 1638356400000;
+const from = 1638576000000;
 // const to = 1634712617000;
 const to = new Date().getTime();
 const resourcePath = './userdata'
