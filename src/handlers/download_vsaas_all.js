@@ -262,29 +262,20 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
         if (vsaasEvent) {
             let ret = null;
 
+            // 下載影片
             let ts = vsaasEvent.start_time_ts;
-            // 取得影片連結
             let url = await getVideoLink(server, udid, ts, "mp4");
             console.log(`雲端事件時間: ${ts}, 錄影連結: ${url}`);
-            // 下載影片
-            try {
+            do {
                 ret = await downloadVideo(url, filename, "mp4");
-                record.status = 2;
-            }
-            catch (error) {
-                console.log("檔案下載或存檔失敗")
-            }
+            } while (ret == 0);
+            record.status = 2;
 
+            // 下載照片
             ts = vsaasEvent.thumbnail;
             url = await getVideoLink(server, udid, ts, "jpg");
             console.log(`雲端事件時間: ${ts}, 縮圖連結: ${url}`);
-            // 下載照片
-            try {
-                ret = await downloadVideo(url, filename, "jpg");
-            }
-            catch (error) {
-                console.log("檔案下載或存檔失敗")
-            }
+            ret = await downloadVideo(url, filename, "jpg");
 
         } else {
             console.log(`找不到對應的事件錄影`);
@@ -357,8 +348,12 @@ const downloadVideo = async (url, filename, type) => {
 
     return apiTUTKDownloadVideo(url).then(res => {
         return new Promise((resolve, reject) => {
-            res.data.pipe(writer);
+            // console.log("寫檔中...");
+            let timeout = setTimeout(() => {
+                writer.destroy(new Error("超時"))
+            }, 3000);
             let error = null;
+
             writer.on('error', err => {
                 error = err;
                 writer.close();
@@ -366,7 +361,7 @@ const downloadVideo = async (url, filename, type) => {
             });
 
             writer.on('finish', () => {
-                console.log("寫擋中...");
+                clearTimeout(timeout);
             })
 
             writer.on('close', () => {
@@ -381,13 +376,14 @@ const downloadVideo = async (url, filename, type) => {
                             break;
                     }
                     resolve(true);
-                } else {
-                    console.log("下載存檔失敗");
                 }
             });
+
+            res.data.pipe(writer);
+
         })
     }).catch(err => {
-        log('--下載失敗', error);
+        log('--下載失敗', err);
         return 0;
     })
 

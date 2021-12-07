@@ -35,7 +35,7 @@ module.exports.apiTUTKSetToken = (token) => tutkRequest.defaults.headers.common[
 module.exports.apiTUTKquery = (data) => tutkRequest.post(`/be/`, data);
 module.exports.apiTUTKGetVideoLink = (url, data) => tutkRequest.post(url, data);
 module.exports.apiTUTKDownloadVideo = (url) => tutkRequest.get(url, {
-    responseType: 'stream'
+    responseType: 'stream',
 });
 
 const userRequest = axios.create({
