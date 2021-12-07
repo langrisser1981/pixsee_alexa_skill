@@ -260,17 +260,31 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
 
         // 下載事件錄影
         if (vsaasEvent) {
+            let ret = null;
+
             let ts = vsaasEvent.start_time_ts;
             // 取得影片連結
             let url = await getVideoLink(server, udid, ts, "mp4");
-            console.log(`雲端事件時間: ${ts}， 錄影連結: ${url}`);
-            let status = await downloadVideo(url, filename, "mp4");
-            record.status = 2;
+            console.log(`雲端事件時間: ${ts}, 錄影連結: ${url}`);
+            // 下載影片
+            try {
+                ret = await downloadVideo(url, filename, "mp4");
+                record.status = 2;
+            }
+            catch (error) {
+                console.log("檔案下載或存檔失敗")
+            }
 
             ts = vsaasEvent.thumbnail;
             url = await getVideoLink(server, udid, ts, "jpg");
-            console.log(`雲端事件時間: ${ts}， 縮圖連結: ${url}`);
-            status = await downloadVideo(url, filename, "jpg");
+            console.log(`雲端事件時間: ${ts}, 縮圖連結: ${url}`);
+            // 下載照片
+            try {
+                ret = await downloadVideo(url, filename, "jpg");
+            }
+            catch (error) {
+                console.log("檔案下載或存檔失敗")
+            }
 
         } else {
             console.log(`找不到對應的事件錄影`);
@@ -338,25 +352,45 @@ const getVideoLink = async (server, udid, ts, type) => {
 
 const downloadVideo = async (url, filename, type) => {
     // 下載影片至指定位置
-    try {
-        let stream = await apiTUTKDownloadVideo(url);
-        let path = `${resourcePath}/video/${filename}.${type}`;
-        stream.data.pipe(fs.createWriteStream(path));
-        switch (type) {
-            case "jpg":
-                console.log(`--縮圖下載完成: ${filename}.jpg`);
-                break;
+    let path = `${resourcePath}/video/${filename}.${type}`;
+    let writer = fs.createWriteStream(path);
 
-            case "mp4":
-                console.log(`--影片下載完成: ${filename}.mp4`);
-                break;
-        }
-        return 1;
+    return apiTUTKDownloadVideo(url).then(res => {
+        return new Promise((resolve, reject) => {
+            res.data.pipe(writer);
+            let error = null;
+            writer.on('error', err => {
+                error = err;
+                writer.close();
+                reject(err);
+            });
 
-    } catch (error) {
+            writer.on('finish', () => {
+                console.log("寫擋中...");
+            })
+
+            writer.on('close', () => {
+                if (!error) {
+                    switch (type) {
+                        case "jpg":
+                            console.log(`--縮圖下載完成: ${filename}.jpg`);
+                            break;
+
+                        case "mp4":
+                            console.log(`--影片下載完成: ${filename}.mp4`);
+                            break;
+                    }
+                    resolve(true);
+                } else {
+                    console.log("下載存檔失敗");
+                }
+            });
+        })
+    }).catch(err => {
         log('--下載失敗', error);
         return 0;
-    }
+    })
+
 }
 
 const saveResult = (records, filename) => {
@@ -414,7 +448,9 @@ function ts2date(ts, utc = false) {
     let min = utc ? date.getUTCMinutes() : date.getMinutes();
     min = ("0" + min).slice(-2);
 
-    return `${year}_${month}_${day}_${hour}_${min}`
+    let sec = utc ? date.getUTCSeconds() : date.getSeconds();
+    sec = ("0" + sec).slice(-2);
+    return `${year}_${month}_${day}_${hour}_${min}_${sec}`
 }
 /**
  * 
@@ -423,6 +459,9 @@ function ts2date(ts, utc = false) {
 function log(title, msg) {
     console.log(`[${title}] ${msg}`);
 }
+
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+// await delay(1000) /// waiting 1 second.
 
 async function handler(sn, mail) {
     console.log(`開始處理 序號:${sn} 使用者:${mail} 的資料`);
