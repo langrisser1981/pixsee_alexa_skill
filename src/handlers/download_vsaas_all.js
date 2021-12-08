@@ -179,6 +179,13 @@ const getVsaasUserInfo = async () => {
         let bindingServer = res.data.data.get_binding_server;
         // log('bindingServer:', bindingServer);
 
+        // 顯示使用者影片使用量
+        data = 'query {get_contract_list{pk,account,duration_type,state,created,updated,expires,nickname,description,devices{udid},max_storage_size,storage_usage}}';
+        res = await apiTUTKquery(data);
+        let contract = res.data.data.get_contract_list[0];
+        let storage_usage = parseFloat(contract.storage_usage).toFixed(2);
+        log('使用量:', `${storage_usage} GB`);
+
         return [udid, bindingServer];
 
     } catch (error) {
@@ -221,7 +228,7 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
         // 轉換時間戳記成人看得懂的格式
         const timeString = ts2date(eventTime);
         // 建立檔案名稱
-        let filename = `${name}_${type}_${timeString}`;
+        let filename = `${name}_${type}_${eventTime}_${timeString}`;
 
         // 尋找是否有符合該使用者標記時間範圍內的事件照片
         const UTCTimeString = ts2date(eventTime, true);
@@ -261,20 +268,22 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
         // 下載事件錄影
         if (vsaasEvent) {
             let ret = null;
+            let ts = vsaasEvent.start_time_ts;
+            console.log(`雲端事件時間: ${ts}`);
 
             // 下載影片
-            let ts = vsaasEvent.start_time_ts;
             let url = await getVideoLink(server, udid, ts, "mp4");
-            console.log(`雲端事件時間: ${ts}, 錄影連結: ${url}`);
+            console.log(`錄影連結: ${url}`);
             do {
                 ret = await downloadVideo(url, filename, "mp4");
             } while (ret == 0);
             record.status = 2;
 
+            console.log(`-`);
+
             // 下載照片
-            ts = vsaasEvent.thumbnail;
             url = await getVideoLink(server, udid, ts, "jpg");
-            console.log(`雲端事件時間: ${ts}, 縮圖連結: ${url}`);
+            console.log(`縮圖連結: ${url}`);
             ret = await downloadVideo(url, filename, "jpg");
 
         } else {
@@ -351,11 +360,15 @@ const downloadVideo = async (url, filename, type) => {
             // console.log("寫檔中...");
             let timeout = setTimeout(() => {
                 writer.destroy(new Error("超時"))
-            }, 3000);
+            }, 6000);
             let error = null;
 
             writer.on('error', err => {
                 error = err;
+                res.data.pause();
+                res.data.unpipe();
+                res.data.destroy();
+
                 writer.close();
                 reject(err);
             });
@@ -380,7 +393,6 @@ const downloadVideo = async (url, filename, type) => {
             });
 
             res.data.pipe(writer);
-
         })
     }).catch(err => {
         log('--下載失敗', err);
