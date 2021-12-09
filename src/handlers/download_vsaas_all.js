@@ -241,10 +241,12 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
         // 尋找是否有符合該使用者標記時間範圍內的事件影片
         let vsaasEvent = vsaasEvents.find((e) => {
             const eventTimestamp = e.start_time_ts;
-            const range = 1 * 60 * 1000;
+            const range = 0 * 60 * 1000;
             const diff = eventTimestamp - eventTime;
-            return Math.abs(diff) < range;
+
+            return Math.abs(diff) <= range;
         })
+
 
         console.log(`第${i}筆資料:`);
         let record = {
@@ -269,8 +271,7 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
         if (vsaasEvent) {
             let ret = null;
             let ts = vsaasEvent.start_time_ts;
-            console.log(`雲端事件時間: ${ts}`);
-
+            console.log(`雲端事件時間: ${eventTime}`);
             // 下載影片
             let url = await getVideoLink(server, udid, ts, "mp4");
             console.log(`錄影連結: ${url}`);
@@ -279,13 +280,15 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
             } while (ret == 0);
             record.status = 2;
 
-            console.log(`-`);
+            // console.log(`-`);
 
             // 下載照片
-            url = await getVideoLink(server, udid, ts, "jpg");
-            console.log(`縮圖連結: ${url}`);
-            ret = await downloadVideo(url, filename, "jpg");
+            // url = await getVideoLink(server, udid, ts, "jpg");
+            // console.log(`縮圖連結: ${url}`);
+            // ret = await downloadVideo(url, filename, "jpg");
 
+            // 從影片中間抓圖
+            ret = await extractFrame(`${filename}`);
         } else {
             console.log(`找不到對應的事件錄影`);
         }
@@ -399,6 +402,66 @@ const downloadVideo = async (url, filename, type) => {
         return 0;
     })
 
+}
+
+const extractFrame = (filename) => {
+    return new Promise((resolve, reject) => {
+        new Promise((resolve, reject) => {
+            // 計算影片影格數
+            let frames;
+
+            let ffmpeg = require('child_process').spawn('ffprobe', ['-v', '0', '-select_streams', 'v:0', '-count_frames', '-show_entries', 'stream=nb_read_frames', '-of', 'csv=p=0', `./userdata/video/${filename}.mp4`]);
+
+            ffmpeg.on('error', function (err) {
+                console.log(err);
+            });
+
+            ffmpeg.on('close', function (code) {
+                // console.log('ffmpeg exited with code ' + code);
+                resolve(frames);
+            });
+
+            ffmpeg.stderr.on('data', function (data) {
+                console.log('stderr: ' + data);
+                var tData = data.toString('utf8');
+                // var a = tData.split('[\\s\\xA0]+');
+                var a = tData.split('\n');
+                // console.log(a);
+            });
+
+            ffmpeg.stdout.on('data', function (data) {
+                frames = data.toString();
+                // console.log(`影格數: ${frames}`);
+            });
+
+        }).then(frames => {
+            // 抓指定的影格輸出成圖片
+            let t = Math.round(frames / 2);
+            let ffmpeg = require('child_process').spawn('ffmpeg', ['-y', '-i', `./userdata/video/${filename}.mp4`, '-vf', `select='eq(n\\,${t})'`, '-vframes', '1', `./userdata/video/${filename}.jpg`]);
+
+            ffmpeg.on('error', function (err) {
+                // console.log(err);
+            });
+
+            ffmpeg.on('close', function (code) {
+                // console.log('ffmpeg exited with code ' + code);
+                console.log(`--截圖完成: ${filename}.jpg`);
+                resolve(code);
+            });
+
+            ffmpeg.stderr.on('data', function (data) {
+                // console.log('stderr: ' + data);
+                var tData = data.toString('utf8');
+                // var a = tData.split('[\\s\\xA0]+');
+                var a = tData.split('\n');
+                // console.log(a);
+            });
+
+            ffmpeg.stdout.on('data', function (data) {
+                ret = data.toString();
+            });
+        })
+    })
 }
 
 const saveResult = (records, filename) => {
@@ -515,9 +578,11 @@ async function handler(sn, mail) {
     }
 
     if (userEvents && photoList && vsaasEvents) {
+        console.log(``);
         console.log(`仁寶雲上有 ${userEvents.length} 個事件`);
         console.log(`仁寶雲上有 ${photoList.length} 個照片`);
         console.log(`VSAAS上有 ${vsaasEvents.length} 個事件錄影`);
+        console.log(``);
         // 尋找並下載符合規則的事件影片
         records = await findTargetVideo(name, userEvents, photoList, udid, bindingServer, vsaasEvents);
     }
