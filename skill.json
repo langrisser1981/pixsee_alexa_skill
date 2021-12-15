@@ -1,37 +1,17 @@
-/* 
-ask smapi get-skill-manifest -s {skillId} -g {development|certified|live} > skill.json
-ask smapi get-skill-manifest -s amzn1.ask.skill.3c682ec3-139e-4886-b237-b0302311b038 -g development > skill.json
-
-ask smapi update-skill-manifest -s {skillId} -g {development|certified|live} --manifest "$(cat skill.json)"
-ask smapi update-skill-manifest -s amzn1.ask.skill.3c682ec3-139e-4886-b237-b0302311b038 -g development --manifest "$(cat skill.json)"
- */
 {
   "manifest": {
     "apis": {
       "smartHome": {
         "endpoint": {
-          "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V"
+          "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V:stage"
         },
         "protocolVersion": "3",
         "regions": {
           "NA": {
             "endpoint": {
-              "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V"
+              "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V:stage"
             }
           }
-        }
-      }
-    },
-    "manifestVersion": "1.0",
-    "permissions": [
-      {
-        "name": "alexa::async_event:write"
-      }
-    ],
-    "publishingInformation": {
-      "locales": {
-        "en-US": {
-          "name": "alexa_pixsee_dev"
         }
       }
     },
@@ -60,6 +40,62 @@ ask smapi update-skill-manifest -s amzn1.ask.skill.3c682ec3-139e-4886-b237-b0302
         }
       ]
     },
-    "manifestVersion": "1.0"
+    "manifestVersion": "1.0",
+    "permissions": [
+      {
+        "name": "alexa::async_event:write"
+      }
+    ],
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "containsAds": false,
+      "isChildDirected": false,
+      "isExportCompliant": true,
+      "locales": {
+        "en-US": {
+          "privacyPolicyUrl": "https://www.pixseecare.com/en/privacy",
+          "termsOfUseUrl": "https://www.pixseecare.com/en/terms"
+        }
+      },
+      "usesPersonalInfo": false
+    },
+    "publishingInformation": {
+      "automaticDistribution": {
+        "isActive": false
+      },
+      "category": "SMART_HOME",
+      "distributionCountries": [],
+      "distributionMode": "PUBLIC",
+      "isAvailableWorldwide": true,
+      "locales": {
+        "en-US": {
+          "description": "pixsee is a smart baby camera  that lets you watch over your baby from anywhere. Use the pixsee skill to manage your pixsee devices. Simply enable the pixsee Skill in the Alexa App and link your Alexa and pixsee accounts to get started.\n\nTo view activity from your pixsee camera, say:\n“Alexa, show camera.”\n\nTo stop your pixsee feed, say:\n“Alexa, back to home.”\n“Alexa, go home.”\n“Alexa, stop.”",
+          "examplePhrases": [
+            "Alexa, show camera"
+          ],
+          "keywords": [
+            "camera",
+            "precious",
+            "moment",
+            "parenting",
+            "smart",
+            "baby",
+            "photos",
+            "growth",
+            "records",
+            "music",
+            "relaxation",
+            "artifact",
+            "vision"
+          ],
+          "largeIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/83a9/cbf345ade01c4df1a115778fed9e7a6f/APP_ICON_LARGE?versionId=c1BD_2cAXyg.3yX3zNfFyL_l_8J.cN0V&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20211214T025511Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=AKIAWBV6LQ4QMJORANUO%2F20211214%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=9ced631d7e1f5f851b56be62537d5b12abf547367f6e95fc851a773d667c8232",
+          "name": "pixsee",
+          "smallIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/7c68/733cde6dc7e84f91872d7a39c1b10443/APP_ICON?versionId=bUhhCbGFxjZMLSurcwHRLkcUMs1uOeGd&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20211214T025511Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=AKIAWBV6LQ4QMJORANUO%2F20211214%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=5740644110261aac1d018a8fe5e9e79d6430d61d7f1fc2ce3bb3336acebd0899",
+          "summary": "Show camera streaming video on FireTVs, Echo Show",
+          "updatesDescription": "pixsee is a smart baby camera  that lets you watch over your baby from anywhere."
+        }
+      },
+      "testingInstructions": "Go to apple store or play store to download pixsee app\nthen signup a new account, then bind the device\nor just using the demo account:  lizette.chiang@gmail.com | password: @Aa123456 to login\nand confirming that you can see the camera stream in the app\n\nthen go to skill store and add pixsee skill\nand complete the account linking\nnext, through voice command, \"alexa, show camera\", you can see the streaming video on alexa compatible devices."
+    }
   }
 }

@@ -145,7 +145,7 @@ async function handleDiscovery(request, callback) {
      * Form and send discover response event.
      *
      */
-    const { deviceId, babyName, locationName, deviceModel, deviceName } = await getUserData();
+    const user = await getUserData();
     const header = {
         messageId: generateMessageID(),
         name: 'Discover.Response',
@@ -157,88 +157,100 @@ async function handleDiscovery(request, callback) {
 
     let endpoints = [];
     camerasObj.cameras.forEach(camera => {
-        const endpoint = {
-            endpointId: deviceId,
-            manufacturerName: camera.manufacturerName,
-            modelName: deviceModel,
-            friendlyName: `${babyName}'s camera`,
-            description: camera.description,
-            displayCategories: ['CAMERA'],
-            cookie: {},
-            capabilities: [
-                {
-                    type: 'AlexaInterface',
-                    interface: 'Alexa.CameraStreamController',
-                    version: '3',
-                    cameraStreamConfigurations: [
+        for (const baby of user.babylist) {
+            for (const device of baby.devicelist) {
+                let deviceId = device.deviceId;
+                let deviceModel = device.deviceModel;
+                let locationName = device.locationName;
+                log('INFO:handleDiscovery:deviceId', deviceId);
+                log('INFO:handleDiscovery:deviceModel', deviceModel);
+                log('INFO:handleDiscovery:locationName', locationName);
+
+                const endpoint = {
+                    endpointId: deviceId,
+                    manufacturerName: camera.manufacturerName,
+                    modelName: deviceModel,
+                    friendlyName: `${locationName}`,
+                    description: camera.description,
+                    displayCategories: ['CAMERA'],
+                    cookie: {},
+                    capabilities: [
                         {
-                            protocols: ['RTSP'],
-                            resolutions: camera.resolutions,
-                            authorizationTypes: ['NONE'],
-                            videoCodecs: camera.videoCodecs,
-                            audioCodecs: camera.audioCodecs
-                        }]
-                },
-                {
-                    type: 'AlexaInterface',
-                    interface: 'Alexa.MediaMetadata',
-                    version: '3',
-                    proactivelyReported: true
-                },
-                {
-                    type: "AlexaInterface",
-                    interface: "Alexa.PowerController",
-                    version: "3",
-                    properties: {
-                        supported: [
-                            {
-                                name: "powerState"
+                            type: 'AlexaInterface',
+                            interface: 'Alexa.CameraStreamController',
+                            version: '3',
+                            cameraStreamConfigurations: [
+                                {
+                                    protocols: ['RTSP'],
+                                    resolutions: camera.resolutions,
+                                    authorizationTypes: ['NONE'],
+                                    videoCodecs: camera.videoCodecs,
+                                    audioCodecs: camera.audioCodecs
+                                }]
+                        },
+                        {
+                            type: 'AlexaInterface',
+                            interface: 'Alexa.MediaMetadata',
+                            version: '3',
+                            proactivelyReported: true
+                        },
+                        {
+                            type: "AlexaInterface",
+                            interface: "Alexa.PowerController",
+                            version: "3",
+                            properties: {
+                                supported: [
+                                    {
+                                        name: "powerState"
+                                    }
+                                ],
+                                proactivelyReported: true,
+                                retrievable: true
                             }
-                        ],
-                        proactivelyReported: true,
-                        retrievable: true
-                    }
-                },
-                {
-                    type: "AlexaInterface",
-                    interface: "Alexa.Speaker",
-                    version: "3",
-                    properties: {
-                        supported: [
-                            {
-                                name: "volume"
-                            },
-                            {
-                                name: "muted"
+                        },
+                        {
+                            type: "AlexaInterface",
+                            interface: "Alexa.Speaker",
+                            version: "3",
+                            properties: {
+                                supported: [
+                                    {
+                                        name: "volume"
+                                    },
+                                    {
+                                        name: "muted"
+                                    }
+                                ],
+                                retrievable: true,
+                                proactivelyReported: true
                             }
-                        ],
-                        retrievable: true,
-                        proactivelyReported: true
-                    }
-                },
-                {
-                    type: "AlexaInterface",
-                    interface: "Alexa.EndpointHealth",
-                    version: "3",
-                    properties: {
-                        supported: [
-                            {
-                                name: "connectivity"
+                        },
+                        {
+                            type: "AlexaInterface",
+                            interface: "Alexa.EndpointHealth",
+                            version: "3",
+                            properties: {
+                                supported: [
+                                    {
+                                        name: "connectivity"
+                                    }
+                                ],
+                                proactivelyReported: true,
+                                retrievable: true
                             }
-                        ],
-                        proactivelyReported: true,
-                        retrievable: true
-                    }
-                },
-                {
-                    type: "AlexaInterface",
-                    interface: "Alexa",
-                    version: "3"
-                }
-            ]
-        };
-        // endpoint.capabilities.push(...camera.capabilities);
-        endpoints.push(endpoint);
+                        },
+                        {
+                            type: "AlexaInterface",
+                            interface: "Alexa",
+                            version: "3"
+                        }
+                    ]
+                };
+                // endpoint.capabilities.push(...camera.capabilities);
+                endpoints.push(endpoint);
+            }
+        }
+
     });
 
     const response = {
@@ -912,42 +924,49 @@ function handleDirectives(request, callback) {
 }
 
 const getUserData = async () => {
-    let openId, babyId, deviceId, sn;
-    openId = babyId = deviceId = sn = 0;
-    let babyName, locationName, deviceModel, deviceName;
-    babyName = locationName = deviceModel = deviceName = "";
+    let user;
 
     try {
-        let response = await apiUserInfo();
-        openId = response.data.result.openId;
+        const userInfo = await apiUserInfo();
+        user = JSON.parse(JSON.stringify(userInfo.data.result));
+        user.babylist = [];
 
-        response = await apiBabyInfo(openId);
-        if (response.data.result.length > 0) {
-            babyId = response.data.result[0].babyId;
-            babyName = response.data.result[0].name;
+        let openId = user.openId;
+        let email = user.email;
+        log('INFO:openId:', openId);
+        log('INFO:email:', email);
+        const babyInfo = await apiBabyInfo(openId);
+        if (babyInfo.data.result.length > 0) {
+            for (const _baby of babyInfo.data.result) {
+                let baby = JSON.parse(JSON.stringify(_baby));
+                baby.devicelist = [];
+
+                let babyId = baby.babyId;
+                let babyName = baby.name;
+                log('--INFO:babyId:', babyId);
+                log('--INFO:babyName:', babyName);
+                const deviceInfo = await apiDeviceInfo(babyId);
+                if (deviceInfo.data.result.length > 0) {
+                    for (const _device of deviceInfo.data.result) {
+                        let device = JSON.parse(JSON.stringify(_device));
+                        baby.devicelist.push(device);
+
+                        let deviceId = device.deviceId;
+                        let sn = device.sn;
+                        let locationName = device.locationName;
+                        log('----INFO:deviceId', deviceId);
+                        log('----INFO:sn', sn);
+                        log('----INFO:locationName', locationName);
+                    }
+                }
+                user.babylist.push(baby);
+            }
         }
 
-        response = await apiDeviceInfo(babyId);
-        if (response.data.result.length > 0) {
-            deviceId = response.data.result[0].deviceId;
-            sn = response.data.result[0].sn;
-            locationName = response.data.result[0].locationName;
-            deviceName = response.data.result[0].deviceName;
-            deviceModel = response.data.result[0].deviceModel;
-        }
-
-        log('INFO', `openId:       ${openId}`);
-        log('INFO', `babyId:       ${babyId}`);
-        log('INFO', `deviceId:     ${deviceId}`);
-        log('INFO', `serial:       ${sn}`);
-        log('INFO', `babyName:     ${babyName}`);
-        log('INFO', `locationName: ${locationName}`);
-        log('INFO', `deviceName:   ${deviceName}`);
-        log('INFO', `deviceModel:  ${deviceModel}`);
     } catch (error) {
         log('ERROR', error);
     } finally {
-        return { openId, babyId, deviceId, sn, babyName, locationName, deviceName, deviceModel };
+        return user;
     }
 }
 
@@ -955,18 +974,27 @@ const bindToCloud = async (code) => {
     let result = false;
 
     try {
-        const { openId, babyId, deviceId, sn } = await getUserData();
-        const body = {
-            target: "avs",
-            code: code,
-            endpointId: deviceId,
-            accountId: openId,
-            sn: sn
-        }
-        const res = await apiBindToCloud(body)
+        const user = await getUserData();
+        let openId = user.openId;
 
-        log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
-        result = res.status == 200 ? true : false;
+        for (const baby of user.babylist) {
+            for (const device of baby.devicelist) {
+                let deviceId = device.deviceId;
+                let sn = device.sn;
+
+                const body = {
+                    target: "avs",
+                    code: code,
+                    endpointId: deviceId,
+                    accountId: openId,
+                    sn: sn
+                }
+                const res = await apiBindToCloud(body)
+
+                log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
+                result = res.status == 200 ? true : false;
+            }
+        }
     } catch (error) {
         log('ERROR', error);
     } finally {

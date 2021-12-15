@@ -8,7 +8,7 @@ baseURL = 'https://staging.ipg-services.com/api/v1'
 baseURL = 'https://api.pixseecare.com.cn/api/v1'
         'Authorization': 'Bearer MmUzOTY4NGYtZTVhYy00NzM3LWIyNzktYzU3OTQxMDg4MTUz'
  */
-baseURL = 'https://api.ipg-services.com/api/v1'
+baseURL = 'https://staging.ipg-services.com/api/v1'
 const adminRequest = axios.create({
     baseURL: baseURL,
     headers: {
@@ -24,9 +24,9 @@ let realm = 'BIOSLAB';
 let realm = 'BIOSLAB-stg';
  */
 const tutkRequest = axios.create({
-    baseURL: 'https://asia-vsaasapi-tutk.kalayservice.com/vsaas/api/v1',
+    baseURL: 'https://asia-vpapi-tutk-stg.kalay.us/vsaas/api/v1/',
 })
-let realm = 'BIOSLAB';
+let realm = 'BIOSLAB-stg';
 
 module.exports.apiGetGrantCode = (sn) => adminRequest.delete(`/admin/some_devices?sn=${sn}`);
 
