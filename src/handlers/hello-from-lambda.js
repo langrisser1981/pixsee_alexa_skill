@@ -977,24 +977,27 @@ const bindToCloud = async (code) => {
         const user = await getUserData();
         let openId = user.openId;
 
-        for (const baby of user.babylist) {
-            for (const device of baby.devicelist) {
-                let deviceId = device.deviceId;
-                let sn = device.sn;
+        let baby = user.babylist[0];
+        let device = baby.devicelist[0];
+        // for (const baby of user.babylist) {
+        //     for (const device of baby.devicelist) {
+        let deviceId = device.deviceId;
+        let sn = device.sn;
 
-                const body = {
-                    target: "avs",
-                    code: code,
-                    endpointId: deviceId,
-                    accountId: openId,
-                    sn: sn
-                }
-                const res = await apiBindToCloud(body)
-
-                log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
-                result = res.status == 200 ? true : false;
-            }
+        const body = {
+            target: "avs",
+            code: code,
+            endpointId: deviceId,
+            accountId: openId,
+            sn: sn
         }
+        const res = await apiBindToCloud(body)
+
+        log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
+        result = res.status == 200 ? true : false;
+        //     }
+        // }
+
     } catch (error) {
         log('ERROR', error);
     } finally {
