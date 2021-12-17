@@ -50,14 +50,8 @@ const getPixseeToken = async (code) => {
         grant_type: 'authorization_code'
     }
 
-    const config = {
-        headers: {
-            'Authorization': 'Basic Wm1Kak1qQmxZall0T0RRd015MDBaV1ppTFdJMFptUXRZakUyWkdNeU16TmhNekZqOllUTXpNelEzTURFdE5tRTFZaTAwTTJOaUxXSXlaall0TURVM05qQmhPREUwWkdWbA==',
-        },
-    };
-
     try {
-        let res = await apiGetToken(data, config);
+        let res = await apiGetToken(data);
         token = res.data.access_token;
         token = `Bearer ${token}`;
         log(2, `pixsee_token:, ${token}`);

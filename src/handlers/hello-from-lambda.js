@@ -146,6 +146,8 @@ async function handleDiscovery(request, callback) {
      *
      */
     const user = await getUserData();
+    // log("user:", JSON.stringify(user));
+
     const header = {
         messageId: generateMessageID(),
         name: 'Discover.Response',
