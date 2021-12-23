@@ -959,6 +959,10 @@ const getUserData = async () => {
                         let deviceId = device.deviceId;
                         let sn = device.sn;
                         let locationName = device.locationName;
+                        // 轉換小寫拿掉底線
+                        locationName = locationName.replace(/_/g, " ").toLowerCase();
+                        device.locationName = locationName;
+
                         log('----INFO:deviceId', deviceId);
                         log('----INFO:sn', sn);
                         log('----INFO:locationName', locationName);
