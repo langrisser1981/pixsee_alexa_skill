@@ -813,16 +813,16 @@ function handleEvents(event, callback) {
 
     switch (event.request.type) {
         case 'AlexaSkillEvent.SkillEnabled':
-            log('event', '0')
+            log('event', 'SkillEnabled')
             break;
 
         case 'AlexaSkillEvent.SkillAccountLinked':
             let res = setUserId(userId);
-            log('event', '1')
+            log('event', 'SkillAccountLinked')
             break;
 
         case 'AlexaSkillEvent.SkillDisabled':
-            log('event', '2')
+            log('event', 'SkillDisabled')
             break;
 
         default:
@@ -935,8 +935,10 @@ const getUserData = async () => {
 
         let openId = user.openId;
         let email = user.email;
+        log('INFO:', "#### 使用者資訊 ####");
         log('INFO:openId:', openId);
         log('INFO:email:', email);
+        log('INFO:', "");
         const babyInfo = await apiBabyInfo(openId);
         if (babyInfo.data.result.length > 0) {
             for (const _baby of babyInfo.data.result) {
@@ -945,6 +947,7 @@ const getUserData = async () => {
 
                 let babyId = baby.babyId;
                 let babyName = baby.name;
+                log('INFO:', "&&&& 寶寶資訊 &&&&");
                 log('--INFO:babyId:', babyId);
                 log('--INFO:babyName:', babyName);
                 const deviceInfo = await apiDeviceInfo(babyId);
@@ -962,8 +965,10 @@ const getUserData = async () => {
                     }
                 }
                 user.babylist.push(baby);
+                log('INFO:', "%%%%");
             }
         }
+        log('INFO:', "########");
 
     } catch (error) {
         log('ERROR', error);
@@ -974,31 +979,34 @@ const getUserData = async () => {
 
 const bindToCloud = async (code) => {
     let result = false;
+    let abort = false;
 
     try {
         const user = await getUserData();
         let openId = user.openId;
 
-        let baby = user.babylist[0];
-        let device = baby.devicelist[0];
-        // for (const baby of user.babylist) {
-        //     for (const device of baby.devicelist) {
-        let deviceId = device.deviceId;
-        let sn = device.sn;
+        for (const baby of user.babylist) {
+            if (abort) break;
 
-        const body = {
-            target: "avs",
-            code: code,
-            endpointId: deviceId,
-            accountId: openId,
-            sn: sn
+            for (const device of baby.devicelist) {
+                let deviceId = device.deviceId;
+                let sn = device.sn;
+
+                const body = {
+                    target: "avs",
+                    code: code,
+                    endpointId: deviceId,
+                    accountId: openId,
+                    sn: sn
+                }
+                const res = await apiBindToCloud(body)
+
+                log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
+                result = res.status == 200 ? true : false;
+                abort = true;
+                break;
+            }
         }
-        const res = await apiBindToCloud(body)
-
-        log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
-        result = res.status == 200 ? true : false;
-        //     }
-        // }
 
     } catch (error) {
         log('ERROR', error);
