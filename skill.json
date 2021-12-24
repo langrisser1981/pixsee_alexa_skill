@@ -17,7 +17,7 @@
     },
     "events": {
       "endpoint": {
-        "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V"
+        "uri": "arn:aws:lambda:us-east-1:671665908131:function:sam-app-helloFromLambdaFunction-8RZbiN3zHw9V:stage"
       },
       "subscriptions": [
         {
@@ -88,9 +88,9 @@
             "artifact",
             "vision"
           ],
-          "largeIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/83a9/cbf345ade01c4df1a115778fed9e7a6f/APP_ICON_LARGE?versionId=c1BD_2cAXyg.3yX3zNfFyL_l_8J.cN0V&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20211214T025511Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=AKIAWBV6LQ4QMJORANUO%2F20211214%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=9ced631d7e1f5f851b56be62537d5b12abf547367f6e95fc851a773d667c8232",
+          "largeIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/83a9/cbf345ade01c4df1a115778fed9e7a6f/APP_ICON_LARGE?versionId=c1BD_2cAXyg.3yX3zNfFyL_l_8J.cN0V&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20211224T055320Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=AKIAWBV6LQ4QMJORANUO%2F20211224%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=268d4e6a4b0e24e84f3967971b4ff8dcd38ce82ae006f2eb2e67e1e06b86d316",
           "name": "pixsee",
-          "smallIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/7c68/733cde6dc7e84f91872d7a39c1b10443/APP_ICON?versionId=bUhhCbGFxjZMLSurcwHRLkcUMs1uOeGd&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20211214T025511Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=AKIAWBV6LQ4QMJORANUO%2F20211214%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=5740644110261aac1d018a8fe5e9e79d6430d61d7f1fc2ce3bb3336acebd0899",
+          "smallIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/7c68/733cde6dc7e84f91872d7a39c1b10443/APP_ICON?versionId=bUhhCbGFxjZMLSurcwHRLkcUMs1uOeGd&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20211224T055320Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=AKIAWBV6LQ4QMJORANUO%2F20211224%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=04396464140ed39a70905c091bec3cd0785db9e3754d4d6aab6bc9f14b73515e",
           "summary": "Show camera streaming video on FireTVs, Echo Show",
           "updatesDescription": "pixsee is a smart baby camera  that lets you watch over your baby from anywhere."
         }
