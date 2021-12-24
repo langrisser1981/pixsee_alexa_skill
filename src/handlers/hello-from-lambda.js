@@ -511,11 +511,6 @@ function handleMediaMetadata(request, callback) {
 }
 
 async function reportState(request, callback) {
-    let data = {
-        commandKey: 'deviceState',
-        data: ""
-    }
-
     // 定義回覆格式
     const correlationToken = request.directive.header.correlationToken;
     const endpointId = request.directive.endpoint.endpointId;
@@ -531,11 +526,38 @@ async function reportState(request, callback) {
     };
     let payload = {};
     let response = {};
+    let sn = null;
+    log('INFO:', `查詢裝置狀態`);
+    log('INFO:', `deviceId: ${endpointId}`);
 
     try {
-        const { sn } = await getUserData();
-        const res = await apiSendIOTCmd(sn, data);
-        log('DEBUG', `deviceState: ${res.status}: ${res.data}`);
+        const user = await getUserData();
+        let openId = user.openId;
+
+        // 查找該裝置的序號
+        for (const baby of user.babylist) {
+            for (const device of baby.devicelist) {
+                let deviceId = device.deviceId;
+                if (endpointId == deviceId) {
+                    sn = device.sn;
+                    break;
+                }
+            }
+        }
+
+        // 如果裝置帶馬可以找到對應的序號，用該序號反查裝置狀態
+        if (sn != null) {
+            let data = {
+                commandKey: 'deviceState',
+                data: ""
+            }
+            const res = await apiSendIOTCmd(sn, data);
+            log('DEBUG', `deviceState: ${res.status}: ${JSON.stringify(res.data)}`);
+        } else {
+            log('DEBUG', `雲端找不到該裝置`);
+        }
+
+        // 目前不管裝智狀態如何，都回傳裝置正常
         let properties = [
             {
                 namespace: "Alexa.PowerController",

@@ -10,9 +10,9 @@
         "endpoint": {
             "scope": {
                 "type": "BearerToken",
-                "token": "YTI2ZGJlNmItMTU4OS00NGExLTg4ZDAtMDlmMjEyNjc3MTI0"
+                "token": "NzkwZWE5Y2EtMzc5ZS00OWE1LTk4MzYtZTFiM2FjYjhkMDdl"
             },
-            "endpointId": "Mjg2ZjRmNDMtNTU3Yi00ZGZiLTk3MDYtOWZiNzkwMjQwNWZm",
+            "endpointId": "ZWE5NmEyZTQtZjZmNC00NDg3LTg2MmQtOWQzMTZkYTQxMmFm",
             "cookie": {}
         },
         "payload": {}
