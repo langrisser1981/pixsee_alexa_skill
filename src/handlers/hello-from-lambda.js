@@ -1005,35 +1005,44 @@ const getUserData = async () => {
 
 const bindToCloud = async (code) => {
     let result = false;
-    let abort = false;
+    // let abort = false;
 
     try {
         const user = await getUserData();
         let openId = user.openId;
 
-        for (const baby of user.babylist) {
-            if (abort) break;
-
-            for (const device of baby.devicelist) {
-                let deviceId = device.deviceId;
-                let sn = device.sn;
-
-                const body = {
-                    target: "avs",
-                    code: code,
-                    endpointId: deviceId,
-                    accountId: openId,
-                    sn: sn
-                }
-                const res = await apiBindToCloud(body)
-
-                log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
-                result = res.status == 200 ? true : false;
-                abort = true;
-                break;
-            }
+        const body = {
+            target: "avs",
+            code: code,
+            accountId: openId,
         }
-
+        const res = await apiBindToCloud(body)
+        log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
+        result = res.status == 200 ? true : false;
+        /* 
+                for (const baby of user.babylist) {
+                    if (abort) break;
+        
+                    for (const device of baby.devicelist) {
+                        let deviceId = device.deviceId;
+                        let sn = device.sn;
+        
+                        const body = {
+                            target: "avs",
+                            code: code,
+                            endpointId: deviceId,
+                            accountId: openId,
+                            sn: sn
+                        }
+                        const res = await apiBindToCloud(body)
+        
+                        log('INFO', `bindToCloud: ${JSON.stringify(res.status)}`)
+                        result = res.status == 200 ? true : false;
+                        abort = true;
+                        break;
+                    }
+                }
+         */
     } catch (error) {
         log('ERROR', error);
     } finally {
