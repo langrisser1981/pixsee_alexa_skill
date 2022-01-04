@@ -1,2 +1,4 @@
 node_modules
 .aws-sam/
+src/handlers/userdata/video/*.*
+src/handlers/*.log
