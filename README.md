@@ -1,3 +1,93 @@
+# 操作說明
+`安裝Homebrew`
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+`安裝Git`
+```bash
+brew install git
+```
+
+`連結到安裝的版本`
+```bash
+brew link git
+which git
+```
+
+
+`安裝NVM`
+```bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash 
+```
+
+`確認是否有安裝成功`
+```bash
+npm -v
+```
+
+`安裝node`
+先找出LTS版本
+```bash
+nvm list available
+```
+
+`安裝`
+```bash
+nvm install <version>
+nvm install 16.13.1
+```
+
+`確認是否安裝成功`
+```bash
+nvm ls
+```
+
+`選取要使用的版本`
+```bash
+nvm use <version>
+nvm use 16.13.1
+```
+
+
+`下載程式`
+```bash
+git clone https://github.com/langrisser1981/pixsee_alexa_skill.git
+```
+
+`安裝外掛`
+```bash
+npm install
+```
+
+`建立資料夾與需要的檔案`
+建立兩個資料夾放影片檔
+pixsee_alexa_skill\src\handlers\userdata
+pixsee_alexa_skill\src\handlers\userdata\video
+
+建立使用者資料
+\pixsee_alexa_skill\src\handlers\userdata\userlist.csv
+
+>格式 <br>
+>>sn,mail <br>
+>>1080855600145,pixseetest05@gmail.com
+
+`執行下載`
+```bash
+node download_vsaas_all.js <from>
+```
+[時間戳記轉換網站](https://www.epochconverter.com/ "epoch timestamp")
+```bash
+node download_vsaas_all.js 1640761200000
+```
+
+`編輯程式` <br>
+>**起點** #618 <br>
+>**終點** #620 <br>
+>**截圖位置** #431:1(第一格), Math.round(frames/2)(中間), frames(最後一格) <br>
+  
+
+
 # pixsee_alexa_skill
 
 This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Application Model (AWS SAM) command line interface (CLI). It includes the following files and folders:
