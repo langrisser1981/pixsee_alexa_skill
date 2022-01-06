@@ -268,19 +268,22 @@ const findTargetVideo = async (name, userEvents, photoList, udid, server, vsaasE
             log(2, `雲端事件時間: ${eventTime}`);
             // 下載影片
             let url = await getVideoLink(server, udid, ts, "mp4");
-            log(2, `錄影連結: ${url}`);
-            do {
-                ret = await downloadVideo(url, filename, "mp4");
-            } while (ret == 0);
-            record.status = 2;
+            if (url != null) {
+                log(2, `錄影連結: ${url}`);
+                do {
+                    ret = await downloadVideo(url, filename, "mp4");
+                } while (ret == 0);
+                record.status = 2;
 
-            // 下載照片
-            // url = await getVideoLink(server, udid, ts, "jpg");
-            // log(2, `縮圖連結: ${url}`);
-            // ret = await downloadVideo(url, filename, "jpg");
+                // 下載照片
+                // url = await getVideoLink(server, udid, ts, "jpg");
+                // log(2, `縮圖連結: ${url}`);
+                // ret = await downloadVideo(url, filename, "jpg");
 
-            // 從影片中間抓圖
-            ret = await extractFrame(`${filename}`);
+                // 從影片中間抓圖
+                ret = await extractFrame(`${filename}`);
+
+            }
         } else {
             log(2, `找不到對應的事件錄影`);
         }
